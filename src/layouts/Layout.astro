@@ -1,0 +1,92 @@
+---
+import '../styles/app.css'
+
+interface Props {
+	title?: string
+	description?: string
+}
+
+const { title = 'A/B Testing Memory Game', description = 'A live A/B test experiment — play a memory game, contribute real data, and watch the results in real time.' } = Astro.props
+
+const posthogKey = import.meta.env.PUBLIC_POSTHOG_KEY || ''
+const posthogHost = import.meta.env.PUBLIC_POSTHOG_HOST || 'https://api-v2.eeshans.com'
+
+const siteTitle = `${title} • eeshans.com`
+const canonicalURL = new URL(Astro.url.pathname, Astro.site).href
+---
+
+<!doctype html>
+<html lang="en" class="dark">
+<head>
+	<meta charset="utf-8" />
+	<meta content="width=device-width, initial-scale=1.0" name="viewport" />
+	<title>{siteTitle}</title>
+
+	<link rel="canonical" href={canonicalURL} />
+	<meta name="description" content={description} />
+
+	<!-- Open Graph -->
+	<meta property="og:title" content={siteTitle} />
+	<meta property="og:description" content={description} />
+	<meta property="og:url" content={canonicalURL} />
+	<meta property="og:type" content="website" />
+
+	<!-- Twitter -->
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:title" content={siteTitle} />
+	<meta name="twitter:description" content={description} />
+
+	<!-- PostHog Analytics -->
+	{posthogKey && (
+	<script is:inline define:vars={{ posthogKey, posthogHost }}>
+	!function(t,e){var o,n,p,r;e.__SV||(window.posthog&&window.posthog.__loaded)||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split('.');2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement('script')).type='text/javascript',p.crossOrigin='anonymous',p.async=!0,p.src=s.api_host+'/static/array.js',(r=t.getElementsByTagName('script')[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a='posthog',u.people=u.people||[],u.toString=function(t){var e='posthog';return'posthog'!==a&&(e+='.'+a),t||(e+=' (stub)'),e},u.people.toString=function(){return u.toString(1)+'.people (stub)'},o='init capture identify alias register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures getActiveMatchingSurveys getSurveys getNextSurveyStep onSessionId'.split(' '),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+	posthog.init(posthogKey, {
+		api_host: posthogHost,
+		ui_host: 'https://us.posthog.com',
+		defaults: '2025-05-24',
+		person_profiles: 'identified_only',
+		loaded: function(posthog_instance) {
+			window.__posthogReady = true;
+		}
+	});
+	</script>
+	)}
+	{!posthogKey && (<script is:inline>console.warn('PostHog key missing: analytics disabled');</script>)}
+</head>
+<body class="min-h-screen bg-background text-foreground antialiased">
+	<!-- Header -->
+	<header class="border-b border-border/60 bg-card/80 backdrop-blur-sm">
+		<div class="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
+			<div class="flex items-center gap-3">
+				<span class="text-2xl">🍍</span>
+				<div>
+					<h1 class="text-lg font-bold leading-tight">A/B Testing Memory Game</h1>
+					<p class="text-xs text-muted-foreground">
+						A live experiment by <a href="https://eeshans.com" class="font-medium underline underline-offset-2 hover:text-foreground transition-colors">eeshans.com</a>
+					</p>
+				</div>
+			</div>
+			<nav class="flex items-center gap-4 text-sm">
+				<a href="https://eeshans.com/projects" class="text-muted-foreground hover:text-foreground transition-colors">Projects</a>
+				<a href="https://github.com/eeshansrivastava89/ab-simulator" class="text-muted-foreground hover:text-foreground transition-colors">GitHub</a>
+			</nav>
+		</div>
+	</header>
+
+	<!-- Main -->
+	<main class="mx-auto max-w-5xl space-y-6 px-6 py-8">
+		<slot />
+	</main>
+
+	<!-- Footer -->
+	<footer class="border-t border-border/60 bg-card/40">
+		<div class="mx-auto max-w-5xl px-6 py-6 text-center text-xs text-muted-foreground">
+			<p>
+				Part of <a href="https://eeshans.com" class="font-medium underline underline-offset-2 hover:text-foreground transition-colors">eeshans.com</a>
+				&bull; <a href="https://eeshans.com/analysis?project=ab-simulator" class="font-medium underline underline-offset-2 hover:text-foreground transition-colors">View Analysis</a>
+				&bull; &copy; {new Date().getFullYear()} Eeshan Srivastava
+			</p>
+		</div>
+	</footer>
+</body>
+</html>

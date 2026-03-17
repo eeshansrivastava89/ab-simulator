@@ -1,0 +1,15 @@
+# build
+dist/
+node_modules/
+.astro/
+
+# env
+.env
+.env.local
+
+# OS
+.DS_Store
+
+# editor
+.vscode/
+.idea/

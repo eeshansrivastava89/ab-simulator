@@ -1,0 +1,180 @@
+/* app.css — AB Simulator standalone theme
+   Subset of eeshans.com design system for visual consistency */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+	/* Default: Catppuccin Mocha (dark) — matches eeshans.com */
+	:root {
+		--background: 240 21% 15%;
+		--foreground: 226 64% 88%;
+		--card: 240 21% 15%;
+		--card-foreground: 226 64% 88%;
+		--popover: 240 21% 15%;
+		--popover-foreground: 226 64% 88%;
+		--primary: 226 64% 88%;
+		--primary-foreground: 240 21% 15%;
+		--secondary: 237 16% 23%;
+		--secondary-foreground: 226 64% 88%;
+		--muted: 237 16% 23%;
+		--muted-foreground: 228 24% 72%;
+		--accent: 267 84% 81%;
+		--accent-foreground: 240 21% 15%;
+		--destructive: 351 74% 73%;
+		--destructive-foreground: 240 21% 15%;
+		--border: 231 11% 48%;
+		--input: 231 11% 48%;
+		--ring: 267 84% 81%;
+		--radius: 0.5rem;
+	}
+
+	/* Light mode override */
+	.light {
+		--background: 220 23% 95%;
+		--foreground: 234 16% 35%;
+		--card: 220 23% 95%;
+		--card-foreground: 234 16% 35%;
+		--popover: 220 23% 95%;
+		--popover-foreground: 234 16% 35%;
+		--primary: 234 16% 35%;
+		--primary-foreground: 220 23% 95%;
+		--secondary: 223 13% 83%;
+		--secondary-foreground: 234 16% 35%;
+		--muted: 223 13% 83%;
+		--muted-foreground: 233 10% 47%;
+		--accent: 266 85% 58%;
+		--accent-foreground: 220 23% 95%;
+		--destructive: 347 87% 44%;
+		--destructive-foreground: 220 23% 95%;
+		--border: 228 11% 75%;
+		--input: 228 11% 75%;
+		--ring: 266 85% 58%;
+	}
+
+	* {
+		@apply border-border;
+	}
+	body {
+		@apply bg-background text-foreground;
+		font-family: 'Inter', system-ui, sans-serif;
+	}
+	h1, h2, h3, h4, h5, h6 {
+		font-family: 'Playfair Display', Georgia, serif;
+	}
+}
+
+/* ═══════════════════════════════════════════════
+   Pineapple progress bar + game UI styles
+   ═══════════════════════════════════════════════ */
+
+/* Memorize pill */
+.memorize-pill {
+	@apply rounded-xl border border-border/60 bg-muted/60 px-4 py-2 shadow-sm transition-all duration-300;
+}
+.memorize-pill[data-state="memorizing"] {
+	@apply border-amber-400/60 bg-amber-50/80 dark:border-amber-500/40 dark:bg-amber-500/10;
+}
+.memorize-pill[data-state="hunting"] {
+	@apply border-emerald-400/60 bg-emerald-50/80 dark:border-emerald-500/40 dark:bg-emerald-500/10;
+}
+.memorize-countdown {
+	@apply rounded-lg bg-slate-100 px-2.5 py-0.5 font-mono text-lg font-bold tabular-nums dark:bg-slate-800;
+}
+
+/* Pineapple progress tracker */
+.pineapple-progress {
+	@apply space-y-2 rounded-2xl border border-border/60 bg-muted/60 p-4 shadow-sm transition-all duration-500;
+}
+.pineapple-progress.success {
+	@apply border-emerald-400/60 bg-emerald-50/80 dark:border-emerald-500/40 dark:bg-emerald-500/10;
+}
+.pineapple-progress.fail {
+	@apply border-red-400/60 bg-red-50/80 dark:border-red-500/40 dark:bg-red-500/10;
+}
+
+.pineapple-progress-track {
+	@apply relative h-8 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800;
+}
+.pineapple-progress-fill {
+	@apply absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 transition-all duration-500 ease-out;
+}
+.pineapple-progress-slots {
+	@apply absolute inset-0 flex items-center justify-around px-2;
+}
+.pineapple-slot {
+	@apply flex h-6 w-6 items-center justify-center rounded-full text-sm transition-all duration-300;
+	opacity: 0.3;
+}
+.pineapple-slot.is-complete {
+	opacity: 1;
+	transform: scale(1.1);
+}
+.pineapple-slot.is-active {
+	opacity: 0.6;
+	animation: pulse 1.5s ease-in-out infinite;
+}
+.pineapple-slot.is-missed {
+	opacity: 0.15;
+}
+.pineapple-slot.pop {
+	animation: slotPop 320ms ease-out;
+}
+
+@keyframes slotPop {
+	0% { transform: scale(1); }
+	50% { transform: scale(1.4); }
+	100% { transform: scale(1.1); }
+}
+
+/* Pineapple result stats */
+.pineapple-stats {
+	@apply flex items-center gap-3 overflow-hidden rounded-xl bg-card/80 px-4 py-2 text-sm;
+	max-height: 0;
+	opacity: 0;
+	transition: max-height 0.5s ease, opacity 0.4s ease, padding 0.4s ease;
+	padding-top: 0;
+	padding-bottom: 0;
+}
+.pineapple-stats.is-visible {
+	max-height: 60px;
+	opacity: 1;
+	padding-top: 0.5rem;
+	padding-bottom: 0.5rem;
+}
+.pineapple-stats .label {
+	@apply text-xs font-medium text-muted-foreground;
+}
+.pineapple-stats .value {
+	@apply font-mono text-base font-bold tabular-nums;
+}
+.pineapple-stats-divider {
+	@apply h-6 w-px bg-border/60;
+}
+.pineapple-stats-pill {
+	@apply rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-bold text-amber-800 dark:bg-amber-500/20 dark:text-amber-300;
+	opacity: 0;
+	transform: scale(0.8);
+	transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.pineapple-stats-pill.is-visible {
+	opacity: 1;
+	transform: scale(1);
+}
+
+/* Grid pulse for active game */
+.grid-live {
+	border-color: hsl(var(--accent));
+	box-shadow: 0 0 0 1px hsl(var(--accent) / 0.3);
+}
+
+/* Variant theme accents on puzzle section */
+.variant-a-theme {
+	border-color: #f9e9cc !important;
+}
+.variant-b-theme {
+	border-color: #f5a656 !important;
+}
