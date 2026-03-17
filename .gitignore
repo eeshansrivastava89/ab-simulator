@@ -2,6 +2,7 @@
 dist/
 node_modules/
 .astro/
+.venv/
 
 # env
 .env

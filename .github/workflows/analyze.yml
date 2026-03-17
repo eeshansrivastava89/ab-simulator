@@ -1,0 +1,31 @@
+name: Run Analysis
+
+on:
+  schedule:
+    - cron: '0 */2 * * *'  # Every 2 hours
+  push:
+    branches: [main]
+    paths:
+      - 'notebooks/**'
+  workflow_dispatch:
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: 'analytics/requirements.txt'
+
+      - name: Install dependencies
+        run: pip install -q -r analytics/requirements.txt
+
+      - name: Run notebook
+        env:
+          PUBLIC_SUPABASE_URL: ${{ secrets.PUBLIC_SUPABASE_URL }}
+          PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.PUBLIC_SUPABASE_ANON_KEY }}
+        run: jupyter execute notebooks/ab_test_analysis.ipynb

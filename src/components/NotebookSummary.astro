@@ -1,0 +1,185 @@
+---
+/**
+ * NotebookSummary — displays latest experiment findings from Supabase.
+ * Reads the most recent row from ab_simulator_summary at build time.
+ */
+
+interface Metric {
+	label: string
+	value: string
+	delta?: string
+	delta_direction?: 'up' | 'down' | 'neutral'
+	context?: string
+}
+
+interface SummaryRow {
+	id: number
+	status: 'significant' | 'not_significant' | 'inconclusive' | 'error'
+	decision: string
+	metrics: Metric[]
+	warnings?: string[]
+	methodology?: string
+	power_analysis?: string
+	generated_at: string
+}
+
+interface Props {
+	notebookLink?: string
+	class?: string
+}
+
+const { notebookLink = '/analysis/ab-test-analysis.html', class: className } = Astro.props
+
+const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL
+const supabaseKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY
+
+let data: SummaryRow | null = null
+let error: string | null = null
+
+try {
+	const res = await fetch(
+		`${supabaseUrl}/rest/v1/ab_simulator_summary?select=*&order=generated_at.desc&limit=1`,
+		{
+			headers: {
+				apikey: supabaseKey,
+				Authorization: `Bearer ${supabaseKey}`,
+			}
+		}
+	)
+	if (!res.ok) throw new Error(`${res.status}: ${await res.text()}`)
+	const rows = await res.json()
+	data = rows[0] || null
+	if (!data) error = 'No experiment summary found'
+} catch (e) {
+	error = `Error loading summary: ${e}`
+}
+
+const statusConfig = {
+	significant: { color: 'text-green-600', bg: 'bg-green-50 dark:bg-green-950/30', label: 'Significant' },
+	not_significant: { color: 'text-amber-600', bg: 'bg-amber-50 dark:bg-amber-950/30', label: 'Not Significant' },
+	inconclusive: { color: 'text-gray-600', bg: 'bg-gray-50 dark:bg-gray-800/50', label: 'Inconclusive' },
+	error: { color: 'text-red-600', bg: 'bg-red-50 dark:bg-red-950/30', label: 'Error' }
+}
+
+const status = data ? statusConfig[data.status] : null
+const warningCount = data?.warnings?.length || 0
+
+const deltaColor = (dir?: string) => {
+	if (dir === 'up') return 'text-green-600'
+	if (dir === 'down') return 'text-red-600'
+	return 'text-gray-500'
+}
+
+const formatTimestamp = (isoString?: string) => {
+	if (!isoString) return ''
+	return new Date(isoString).toLocaleString('en-US', {
+		year: 'numeric', month: 'short', day: 'numeric',
+		hour: '2-digit', minute: '2-digit'
+	})
+}
+---
+
+{error ? (
+	<div class={`border border-dashed border-border rounded-lg p-4 text-muted-foreground text-sm ${className || ''}`}>
+		{error}
+	</div>
+) : data && status && (
+	<div class={`border border-border rounded-lg overflow-hidden ${className || ''}`}>
+		{/* Header */}
+		<div class={`px-5 py-4 border-b border-border ${status.bg}`}>
+			<div class="flex items-center justify-between gap-4 flex-wrap">
+				<div class="flex items-center gap-3">
+					{data.status === 'significant' ? (
+						<svg class={`h-6 w-6 ${status.color}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+					) : data.status === 'not_significant' ? (
+						<svg class={`h-6 w-6 ${status.color}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+					) : data.status === 'error' ? (
+						<svg class={`h-6 w-6 ${status.color}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+					) : (
+						<svg class={`h-6 w-6 ${status.color}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+					)}
+					<div>
+						<h3 class="font-semibold text-foreground">A/B Test: Pineapple Finder Difficulty</h3>
+						<span class="text-sm">
+							<span class={`font-medium ${status.color}`}>{status.label}</span>
+							{warningCount > 0 ? (
+								<span class="text-amber-600 dark:text-amber-400"> — {warningCount} warning{warningCount > 1 ? 's' : ''} below</span>
+							) : (
+								<span class="text-muted-foreground"> — no warnings</span>
+							)}
+						</span>
+					</div>
+				</div>
+				<div class="flex items-center gap-4">
+					{data.generated_at && (
+						<span class="text-xs text-muted-foreground hidden sm:inline">
+							Updated: {formatTimestamp(data.generated_at)}
+						</span>
+					)}
+					<a
+						href={notebookLink}
+						class="inline-flex items-center gap-1.5 rounded-md bg-foreground px-3 py-1.5 text-sm font-medium text-background transition-colors hover:bg-foreground/90"
+					>
+						View Notebook
+						<svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+					</a>
+				</div>
+			</div>
+		</div>
+
+		{/* Decision */}
+		<div class="px-5 py-4 bg-muted/30 border-b border-border">
+			<p class="text-foreground">
+				<span class="font-semibold">Decision:</span> {data.decision}
+			</p>
+		</div>
+
+		{/* Metrics */}
+		{data.metrics.length > 0 && (
+			<div class="px-5 py-4 grid grid-cols-2 md:grid-cols-4 gap-4">
+				{data.metrics.map((metric) => (
+					<div class="space-y-1">
+						<p class="text-xs text-muted-foreground uppercase tracking-wide">{metric.label}</p>
+						<div class="flex items-baseline gap-2">
+							<span class="text-xl font-semibold text-foreground">{metric.value}</span>
+							{metric.delta && (
+								<span class={`flex items-center gap-0.5 text-sm ${deltaColor(metric.delta_direction)}`}>
+									{metric.delta_direction === 'up' ? (
+										<svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+									) : metric.delta_direction === 'down' ? (
+										<svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>
+									) : (
+										<svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+									)}
+									{metric.delta}
+								</span>
+							)}
+						</div>
+						{metric.context && (
+							<p class="text-xs text-muted-foreground">{metric.context}</p>
+						)}
+					</div>
+				))}
+			</div>
+		)}
+
+		{/* Warnings */}
+		{data.warnings && data.warnings.length > 0 && (
+			<div class="px-5 py-3 border-t border-border bg-amber-50/50 dark:bg-amber-950/20 space-y-1">
+				{data.warnings.map((warning) => (
+					<div class="flex items-start gap-2 text-sm text-amber-700 dark:text-amber-400">
+						<svg class="h-4 w-4 mt-0.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+						<span>{warning}</span>
+					</div>
+				))}
+			</div>
+		)}
+
+		{/* Methodology */}
+		{data.methodology && (
+			<div class="px-5 py-2 border-t border-border bg-muted/10 text-xs text-muted-foreground">
+				<span class="font-medium">Methodology:</span> {data.methodology}
+			</div>
+		)}
+	</div>
+)}

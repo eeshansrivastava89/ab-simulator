@@ -8,32 +8,58 @@
 @tailwind utilities;
 
 @layer base {
-	/* Default: Catppuccin Mocha (dark) — matches eeshans.com */
-	:root {
-		--background: 240 21% 15%;
-		--foreground: 226 64% 88%;
-		--card: 240 21% 15%;
-		--card-foreground: 226 64% 88%;
-		--popover: 240 21% 15%;
-		--popover-foreground: 226 64% 88%;
-		--primary: 226 64% 88%;
-		--primary-foreground: 240 21% 15%;
-		--secondary: 237 16% 23%;
-		--secondary-foreground: 226 64% 88%;
-		--muted: 237 16% 23%;
-		--muted-foreground: 228 24% 72%;
-		--accent: 267 84% 81%;
-		--accent-foreground: 240 21% 15%;
-		--destructive: 351 74% 73%;
-		--destructive-foreground: 240 21% 15%;
-		--border: 231 11% 48%;
-		--input: 231 11% 48%;
-		--ring: 267 84% 81%;
+	/* ═══════════════════════════════════════════════
+	   THEME: Coffee (from Bearded Theme by BeardedBear)
+	   ═══════════════════════════════════════════════ */
+	:root,
+	[data-theme="coffee-light"] {
+		--background: 20 16% 90%;
+		--foreground: 12 32% 16%;
+		--card: 20 16% 90%;
+		--card-foreground: 12 32% 16%;
+		--popover: 20 16% 90%;
+		--popover-foreground: 12 32% 16%;
+		--primary: 12 32% 16%;
+		--primary-foreground: 20 16% 90%;
+		--secondary: 17 14% 87%;
+		--secondary-foreground: 12 32% 16%;
+		--muted: 17 14% 87%;
+		--muted-foreground: 9 8% 61%;
+		--accent: 13 58% 56%;
+		--accent-foreground: 20 16% 90%;
+		--destructive: 0 100% 61%;
+		--destructive-foreground: 20 16% 90%;
+		--border: 18 15% 75%;
+		--input: 18 15% 75%;
+		--ring: 13 58% 56%;
 		--radius: 0.5rem;
 	}
+	[data-theme="coffee-dark"] {
+		--background: 8 7% 15%;
+		--foreground: 10 18% 88%;
+		--card: 8 7% 15%;
+		--card-foreground: 10 18% 88%;
+		--popover: 8 7% 15%;
+		--popover-foreground: 10 18% 88%;
+		--primary: 10 18% 88%;
+		--primary-foreground: 8 7% 15%;
+		--secondary: 12 8% 19%;
+		--secondary-foreground: 10 18% 88%;
+		--muted: 12 8% 19%;
+		--muted-foreground: 10 12% 60%;
+		--accent: 13 81% 70%;
+		--accent-foreground: 8 7% 15%;
+		--destructive: 0 100% 60%;
+		--destructive-foreground: 10 18% 88%;
+		--border: 12 8% 22%;
+		--input: 12 8% 22%;
+		--ring: 13 81% 70%;
+	}
 
-	/* Light mode override */
-	.light {
+	/* ═══════════════════════════════════════════════
+	   THEME: Catppuccin (Latte light / Mocha dark)
+	   ═══════════════════════════════════════════════ */
+	[data-theme="catppuccin-light"] {
 		--background: 220 23% 95%;
 		--foreground: 234 16% 35%;
 		--card: 220 23% 95%;
@@ -54,6 +80,73 @@
 		--input: 228 11% 75%;
 		--ring: 266 85% 58%;
 	}
+	[data-theme="catppuccin-dark"] {
+		--background: 240 21% 15%;
+		--foreground: 226 64% 88%;
+		--card: 240 21% 15%;
+		--card-foreground: 226 64% 88%;
+		--popover: 240 21% 15%;
+		--popover-foreground: 226 64% 88%;
+		--primary: 226 64% 88%;
+		--primary-foreground: 240 21% 15%;
+		--secondary: 237 16% 23%;
+		--secondary-foreground: 226 64% 88%;
+		--muted: 237 16% 23%;
+		--muted-foreground: 228 24% 72%;
+		--accent: 267 84% 81%;
+		--accent-foreground: 240 21% 15%;
+		--destructive: 351 74% 73%;
+		--destructive-foreground: 240 21% 15%;
+		--border: 231 11% 48%;
+		--input: 231 11% 48%;
+		--ring: 267 84% 81%;
+	}
+
+	/* ═══════════════════════════════════════════════
+	   THEME: Classic (clean neutral gray)
+	   ═══════════════════════════════════════════════ */
+	[data-theme="classic-light"] {
+		--background: 0 0% 100%;
+		--foreground: 240 10% 1%;
+		--card: 0 0% 100%;
+		--card-foreground: 240 10% 3.9%;
+		--popover: 0 0% 100%;
+		--popover-foreground: 240 10% 3.9%;
+		--primary: 240 5.9% 10%;
+		--primary-foreground: 0 0% 98%;
+		--secondary: 240 4.8% 95.9%;
+		--secondary-foreground: 240 5.9% 10%;
+		--muted: 240 4.8% 95.9%;
+		--muted-foreground: 240 3.8% 46.1%;
+		--accent: 240 4.8% 95.9%;
+		--accent-foreground: 240 5.9% 10%;
+		--destructive: 0 84.2% 60.2%;
+		--destructive-foreground: 0 0% 98%;
+		--border: 240 5.9% 90%;
+		--input: 240 5.9% 90%;
+		--ring: 240 5.9% 10%;
+	}
+	[data-theme="classic-dark"] {
+		--background: 240 10% 3.9%;
+		--foreground: 0 0% 98%;
+		--card: 240 10% 3.9%;
+		--card-foreground: 0 0% 98%;
+		--popover: 240 10% 3.9%;
+		--popover-foreground: 0 0% 98%;
+		--primary: 0 0% 98%;
+		--primary-foreground: 240 5.9% 10%;
+		--secondary: 240 3.7% 15.9%;
+		--secondary-foreground: 0 0% 98%;
+		--muted: 240 3.7% 15.9%;
+		--muted-foreground: 240 5% 72%;
+		--accent: 240 3.7% 15.9%;
+		--accent-foreground: 0 0% 98%;
+		--destructive: 0 62.8% 30.6%;
+		--destructive-foreground: 0 0% 98%;
+		--border: 240 3.7% 15.9%;
+		--input: 240 3.7% 15.9%;
+		--ring: 240 4.9% 83.9%;
+	}
 
 	* {
 		@apply border-border;
@@ -65,6 +158,69 @@
 	h1, h2, h3, h4, h5, h6 {
 		font-family: 'Playfair Display', Georgia, serif;
 	}
+}
+
+/* ═══════════════════════════════════════════════
+   Theme Switcher
+   ═══════════════════════════════════════════════ */
+
+.theme-switcher {
+	display: flex;
+	gap: 4px;
+}
+
+.theme-pill {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	padding: 3px 8px;
+	border: 1px solid hsl(var(--border));
+	border-radius: 999px;
+	background: transparent;
+	cursor: pointer;
+	transition: all 0.15s;
+	font-family: 'Inter', sans-serif;
+	font-size: 0;
+	color: hsl(var(--muted-foreground));
+}
+
+.theme-pill:hover {
+	border-color: hsl(var(--foreground) / 0.3);
+	color: hsl(var(--foreground));
+}
+
+.theme-pill.active {
+	background: hsl(var(--muted));
+	border-color: hsl(var(--foreground) / 0.2);
+	color: hsl(var(--foreground));
+}
+
+.theme-dot {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	flex-shrink: 0;
+}
+
+.theme-pill-name {
+	font-size: 10px;
+	font-weight: 450;
+}
+
+.theme-icon {
+	display: none;
+	flex-shrink: 0;
+	opacity: 0.6;
+}
+
+.theme-pill.active .theme-icon.sun { display: block; }
+.theme-pill.active .theme-icon.moon { display: none; }
+.dark .theme-pill.active .theme-icon.sun { display: none; }
+.dark .theme-pill.active .theme-icon.moon { display: block; }
+
+@media (max-width: 900px) {
+	.theme-pill-name { display: none; }
+	.theme-pill { padding: 4px 7px; }
 }
 
 /* ═══════════════════════════════════════════════
