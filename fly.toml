@@ -1,0 +1,16 @@
+app = 'ab-simulator'
+primary_region = 'dfw'
+
+[build]
+  [build.args]
+    PUBLIC_POSTHOG_KEY = 'phc_zfue5Ca8VaxypRHPCi9j2h2R3Qy1eytEHt3TMPWlOOS'
+    PUBLIC_POSTHOG_HOST = 'https://api-v2.eeshans.com'
+    PUBLIC_SUPABASE_URL = 'https://nazioidbiydxduonenmb.supabase.co'
+    PUBLIC_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hemlvaWRiaXlkeGR1b25lbm1iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA2NDEyMjQsImV4cCI6MjA3NjIxNzIyNH0.PjEzSI8wq74RCQpSkh7j4zhh_5nXc2nYX0M5vCjLEro'
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
