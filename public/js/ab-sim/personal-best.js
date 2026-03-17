@@ -54,6 +54,7 @@
 	function setPersonalBestVisibility(isVisible) {
 		const personalBestPill = document.getElementById('pineapple-personal-best')
 		if (!personalBestPill) return
+		personalBestPill.classList.toggle('hidden', !isVisible)
 		personalBestPill.classList.toggle('is-visible', Boolean(isVisible))
 		personalBestPill.setAttribute('aria-hidden', Boolean(isVisible) ? 'false' : 'true')
 	}
