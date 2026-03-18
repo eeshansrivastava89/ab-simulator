@@ -14,7 +14,7 @@ import Layout from '../../layouts/Layout.astro'
 				Back to game
 			</a>
 		</div>
-		<div class="rounded-lg border border-border overflow-hidden bg-white">
+		<div class="rounded-lg border border-border overflow-hidden" id="notebook-container">
 			<iframe
 				src="/analysis/ab-test-analysis.html"
 				class="w-full border-0"
@@ -26,16 +26,29 @@ import Layout from '../../layouts/Layout.astro'
 </Layout>
 
 <script>
-	// Auto-resize iframe to fit notebook content
 	const iframe = document.querySelector('iframe')
-	if (iframe) {
-		iframe.addEventListener('load', () => {
-			try {
-				const height = iframe.contentDocument?.documentElement?.scrollHeight
-				if (height) iframe.style.height = height + 'px'
-			} catch (e) {
-				// Cross-origin fallback — keep min-height
-			}
-		})
+	if (!iframe) throw new Error('no iframe')
+
+	function applyTheme() {
+		const isDark = document.documentElement.classList.contains('dark')
+		iframe.style.filter = isDark ? 'invert(1) hue-rotate(180deg)' : 'none'
 	}
+
+	iframe.addEventListener('load', () => {
+		try {
+			// Auto-resize
+			const height = iframe.contentDocument?.documentElement?.scrollHeight
+			if (height) iframe.style.height = height + 'px'
+
+			// Double-invert images so they look normal in dark mode
+			const style = iframe.contentDocument.createElement('style')
+			style.textContent = 'img, .jp-OutputArea-output svg, canvas { filter: invert(1) hue-rotate(180deg); }'
+			iframe.contentDocument.head.appendChild(style)
+		} catch (e) {}
+		applyTheme()
+	})
+
+	// Watch for theme changes
+	const observer = new MutationObserver(applyTheme)
+	observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
 </script>
