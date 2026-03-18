@@ -9,7 +9,7 @@ interface Props {
 	class?: string
 }
 
-const { notebookLink = '/analysis/ab-test-analysis.html', class: className } = Astro.props
+const { notebookLink = '/analysis/', class: className } = Astro.props
 ---
 
 <div id="notebook-summary" class={className || ''} data-notebook-link={notebookLink}>
@@ -25,7 +25,7 @@ const { notebookLink = '/analysis/ab-test-analysis.html', class: className } = A
 (function() {
 	const container = document.getElementById('notebook-summary')
 	if (!container) return
-	const notebookLink = container.dataset.notebookLink || '/analysis/ab-test-analysis.html'
+	const notebookLink = container.dataset.notebookLink || '/analysis/'
 
 	const STATUS = {
 		significant: { color: 'text-green-600', bg: 'bg-green-50 dark:bg-green-950/30', label: 'Significant',

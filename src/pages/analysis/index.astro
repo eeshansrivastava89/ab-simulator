@@ -1,0 +1,41 @@
+---
+import Layout from '../../layouts/Layout.astro'
+---
+
+<Layout title="Analysis: Pineapple Finder Difficulty" description="Full statistical analysis of the A/B testing memory game experiment.">
+	<div class="space-y-4">
+		<div class="flex items-center justify-between">
+			<div>
+				<h2 class="text-2xl font-bold">A/B Test Analysis</h2>
+				<p class="text-sm text-muted-foreground">Full Jupyter notebook with statistical methodology and results</p>
+			</div>
+			<a href="/" class="inline-flex items-center gap-1.5 rounded-md border border-border/60 px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+				<svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+				Back to game
+			</a>
+		</div>
+		<div class="rounded-lg border border-border overflow-hidden bg-white">
+			<iframe
+				src="/analysis/ab-test-analysis.html"
+				class="w-full border-0"
+				style="min-height: 80vh;"
+				title="A/B Test Analysis Notebook"
+			></iframe>
+		</div>
+	</div>
+</Layout>
+
+<script>
+	// Auto-resize iframe to fit notebook content
+	const iframe = document.querySelector('iframe')
+	if (iframe) {
+		iframe.addEventListener('load', () => {
+			try {
+				const height = iframe.contentDocument?.documentElement?.scrollHeight
+				if (height) iframe.style.height = height + 'px'
+			} catch (e) {
+				// Cross-origin fallback — keep min-height
+			}
+		})
+	}
+</script>
