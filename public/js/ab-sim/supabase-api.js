@@ -74,6 +74,9 @@
 		},
 		geoCompletions() {
 			return rpc('ab_completions_geo', {})
+		},
+		userRank(variant, username) {
+			return rpc('user_rank', { p_variant: variant, p_username: username })
 		}
 	}
 })();

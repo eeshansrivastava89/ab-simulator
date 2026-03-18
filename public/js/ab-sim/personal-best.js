@@ -51,12 +51,39 @@
 		console.log('[PB] Updated cache with new best', { variant, personalBestMs })
 	}
 
-	function setPersonalBestVisibility(isVisible) {
-		const personalBestPill = document.getElementById('pineapple-personal-best')
-		if (!personalBestPill) return
-		personalBestPill.classList.toggle('hidden', !isVisible)
-		personalBestPill.classList.toggle('is-visible', Boolean(isVisible))
-		personalBestPill.setAttribute('aria-hidden', Boolean(isVisible) ? 'false' : 'true')
+	function showCelebration(timeMs) {
+		// Remove any existing celebration
+		const existing = document.getElementById('pb-celebration')
+		if (existing) existing.remove()
+
+		const timeStr = window.formatTime ? window.formatTime(timeMs) : (timeMs / 1000).toFixed(2) + 's'
+
+		const overlay = document.createElement('div')
+		overlay.id = 'pb-celebration'
+		overlay.innerHTML = `
+			<div class="pb-celebration-card">
+				<div class="pb-celebration-emoji">🎉</div>
+				<div class="pb-celebration-title">New Personal Best!</div>
+				<div class="pb-celebration-time">${timeStr}</div>
+				<div class="pb-celebration-sub">You're on fire 🔥</div>
+			</div>
+		`
+		document.body.appendChild(overlay)
+
+		// Dismiss on click
+		overlay.addEventListener('click', function() { overlay.remove() })
+
+		// Auto-dismiss after 3.5s
+		setTimeout(function() {
+			overlay.classList.add('pb-celebration-exit')
+			setTimeout(function() { overlay.remove() }, 400)
+		}, 3500)
+	}
+
+	function setPersonalBestVisibility(isVisible, timeMs) {
+		if (isVisible && Number.isFinite(timeMs)) {
+			showCelebration(timeMs)
+		}
 	}
 
 	window.abPersonalBest = {

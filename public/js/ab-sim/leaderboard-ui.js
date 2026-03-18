@@ -25,18 +25,27 @@
     `
 	}
 
-	function buildLeaderboardUserCard(entry, userRank) {
-		if (!entry || !userRank) return ''
-		return `
-      <div class="mt-3 space-y-2 rounded-xl border border-sky-200/80 bg-sky-50/80 p-3 text-sm text-sky-900 shadow-[0_12px_28px_rgba(14,165,233,0.25)] dark:border-sky-500/40 dark:bg-sky-500/10 dark:text-sky-100">
-        <div class="text-[10px] font-bold uppercase tracking-wider text-sky-600 dark:text-sky-300">Your Current Rank</div>
-        <div class="flex items-center justify-between">
-          <span class="flex items-center gap-2 font-medium">
-            <span class="font-bold">${userRank}.</span>
-            <span>${entry.username}</span>
-          </span>
-          <span class="font-mono font-bold tabular-nums">${Number(entry.best_time).toFixed(2)}s</span>
+	function buildUserCard(state) {
+		// state: { type: 'unplayed' | 'ranked', username?, rank?, bestTime?, totalPlayers? }
+		if (state.type === 'unplayed') {
+			return `
+        <div class="mt-3 rounded-xl border border-dashed border-slate-300 bg-slate-50/80 p-3 text-center dark:border-slate-600 dark:bg-slate-800/50">
+          <div class="text-xs text-muted-foreground">🎮 Play to see your rank</div>
         </div>
+      `
+		}
+		const ofTotal = state.totalPlayers ? ' of ' + state.totalPlayers : ''
+		return `
+      <div class="mt-3 rounded-xl border border-amber-300/80 bg-amber-50/80 p-3 text-sm shadow-sm dark:border-amber-500/40 dark:bg-amber-500/10">
+        <div class="text-[10px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-300 mb-1.5">Your Rank</div>
+        <div class="flex items-center justify-between">
+          <span class="flex min-w-0 items-center gap-2">
+            <span class="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-amber-100 text-xs font-bold text-amber-700 dark:bg-amber-500/30 dark:text-amber-200">${state.rank}</span>
+            <span class="truncate font-medium text-foreground">${state.username}</span>
+          </span>
+          <span class="shrink-0 font-mono font-bold tabular-nums text-foreground">${Number(state.bestTime).toFixed(2)}s</span>
+        </div>
+        <div class="text-[10px] text-amber-600/70 dark:text-amber-400/60 mt-1">${ofTotal ? '#' + state.rank + ofTotal + ' players' : ''}</div>
       </div>
     `
 	}
@@ -53,21 +62,48 @@
 				typeof preloadedData === 'undefined'
 					? await window.supabaseApi.leaderboard(variant, 10)
 					: preloadedData
+
 			if (!data || data.length === 0) {
 				list.innerHTML =
 					'<p class="rounded-xl border border-dashed border-border/70 bg-card/40 px-4 py-3 text-center text-xs font-medium text-muted-foreground">Complete a run to enter the hall of fame.</p>'
 				return
 			}
+
 			const userIndex = data.findIndex((entry) => entry.username === username)
-			const userRank = userIndex >= 0 ? userIndex + 1 : null
-			const userEntry = userIndex >= 0 ? data[userIndex] : null
+			const userInTop5 = userIndex >= 0 && userIndex < 5
+
+			// Build top 5 rows
 			const rows = data
 				.slice(0, 5)
 				.map((entry, i) => buildLeaderboardRow(entry, i, entry.username === username))
 				.join('')
-			const userRow = userRank > 5 ? buildLeaderboardUserCard(userEntry, userRank) : ''
 
-			list.innerHTML = `<ol class="space-y-1">${rows}</ol>${userRow}`
+			// Build user card (always shown at bottom unless user is in top 5)
+			let userCardHtml = ''
+			if (!userInTop5) {
+				if (username) {
+					try {
+						const rankData = await window.supabaseApi.userRank(variant, username)
+						if (rankData?.rank) {
+							userCardHtml = buildUserCard({
+								type: 'ranked',
+								username: username,
+								rank: rankData.rank,
+								bestTime: rankData.best_time,
+								totalPlayers: rankData.total_players
+							})
+						} else {
+							userCardHtml = buildUserCard({ type: 'unplayed' })
+						}
+					} catch (e) {
+						userCardHtml = buildUserCard({ type: 'unplayed' })
+					}
+				} else {
+					userCardHtml = buildUserCard({ type: 'unplayed' })
+				}
+			}
+
+			list.innerHTML = `<ol class="space-y-1">${rows}</ol>${userCardHtml}`
 		} catch (error) {
 			console.error('Leaderboard error:', error)
 			list.innerHTML =
