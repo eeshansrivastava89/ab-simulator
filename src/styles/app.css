@@ -13,14 +13,14 @@
 	:root {
 		--radius: 0.5rem;
 		/* RGB channels for Tailwind opacity-modifier support (border/xx, bg-muted/xx, bg-card/xx) */
-		--border-rgb: 217, 210, 201;
-		--muted-rgb: 138, 125, 111;
-		--card-rgb: 255, 255, 255;
+		--border-rgb: 217 210 201;
+		--muted-rgb: 138 125 111;
+		--card-rgb: 255 255 255;
 	}
 	[data-theme="dark"] {
-		--border-rgb: 61, 52, 44;
-		--muted-rgb: 138, 125, 111;
-		--card-rgb: 42, 36, 32;
+		--border-rgb: 61 52 44;
+		--muted-rgb: 138 125 111;
+		--card-rgb: 42 36 32;
 	}
 
 	* {
