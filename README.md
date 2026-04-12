@@ -19,7 +19,7 @@ The question: *does one extra pineapple meaningfully change how people play?*
 
 Every game you play generates real data. The live dashboard shows results updating in real time — completion times, conversion funnels, and a global map of where players are competing from.
 
-## What You Can Learn
+## What You Can Learn 
 
 **If you're studying experimentation or data science**, this project covers the full lifecycle that most courses skip:
 
