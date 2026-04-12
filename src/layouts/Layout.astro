@@ -23,40 +23,26 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site).href
 	const lightModePref = window.matchMedia('(prefers-color-scheme: light)')
 	function getTheme() {
 		const stored = localStorage.getItem('site-theme')
-		if (stored) return stored
-		return 'coffee-' + (lightModePref.matches ? 'light' : 'dark')
+		if (stored === 'light' || stored === 'dark') return stored
+		return lightModePref.matches ? 'light' : 'dark'
 	}
 	function setTheme(theme) {
 		localStorage.setItem('site-theme', theme)
 		const root = document.documentElement
 		root.setAttribute('data-theme', theme)
-		if (theme.endsWith('-dark')) {
-			root.classList.add('dark')
-			root.classList.remove('light')
-		} else {
-			root.classList.remove('dark')
-			root.classList.add('light')
-		}
-		const family = theme.replace(/-light$/, '').replace(/-dark$/, '')
 		document.querySelectorAll('[data-theme-btn]').forEach(btn => {
-			btn.classList.toggle('active', btn.getAttribute('data-theme-btn') === family)
+			btn.classList.toggle('active', true)
 		})
 	}
-	window.__toggleTheme = function(family) {
-		const current = getTheme()
-		const currentFamily = current.replace(/-light$/, '').replace(/-dark$/, '')
-		const currentMode = current.endsWith('-dark') ? 'dark' : 'light'
-		if (family === currentFamily) {
-			setTheme(family + '-' + (currentMode === 'light' ? 'dark' : 'light'))
-		} else {
-			setTheme(family + '-' + currentMode)
-		}
+	window.__toggleTheme = function() {
+		setTheme(getTheme() === 'dark' ? 'light' : 'dark')
 	}
 	setTheme(getTheme())
 	lightModePref.addEventListener('change', (e) => {
-		const current = getTheme()
-		const family = current.replace(/-light$/, '').replace(/-dark$/, '')
-		setTheme(family + '-' + (e.matches ? 'light' : 'dark'))
+		// Only follow system preference if user hasn't explicitly set a theme
+		if (!localStorage.getItem('site-theme')) {
+			setTheme(e.matches ? 'light' : 'dark')
+		}
 	})
 	</script>
 	<meta charset="utf-8" />
@@ -113,23 +99,11 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site).href
 				</div>
 			</div>
 			<div class="flex items-center gap-2 sm:gap-4 shrink-0">
-				<!-- Theme Switcher -->
+				<!-- Theme Toggle -->
 				<div class="theme-switcher">
-					<button data-theme-btn="coffee" class="theme-pill" title="Coffee" onclick="window.__toggleTheme('coffee')">
-						<span class="theme-dot" style="background: hsl(30, 55%, 45%);"></span>
-						<span class="theme-pill-name">Coffee</span>
-						<svg class="theme-icon sun" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-						<svg class="theme-icon moon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-					</button>
-					<button data-theme-btn="catppuccin" class="theme-pill" title="Catppuccin" onclick="window.__toggleTheme('catppuccin')">
-						<span class="theme-dot" style="background: hsl(267, 84%, 70%);"></span>
-						<span class="theme-pill-name">Catppuccin</span>
-						<svg class="theme-icon sun" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-						<svg class="theme-icon moon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-					</button>
-					<button data-theme-btn="classic" class="theme-pill" title="Classic" onclick="window.__toggleTheme('classic')">
-						<span class="theme-dot" style="background: hsl(240, 5.9%, 50%);"></span>
-						<span class="theme-pill-name">Classic</span>
+					<button data-theme-btn="toggle" class="theme-pill active" title="Toggle light/dark" onclick="window.__toggleTheme()">
+						<span class="theme-dot" style="background: #c9a882;"></span>
+						<span class="theme-pill-name">Theme</span>
 						<svg class="theme-icon sun" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
 						<svg class="theme-icon moon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
 					</button>
@@ -166,14 +140,10 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site).href
 	<!-- Sync theme button active state after DOM renders -->
 	<script is:inline>
 	(function() {
-		function syncThemeButtons() {
-			var theme = localStorage.getItem('site-theme') || 'coffee-dark'
-			var family = theme.replace(/-light$/, '').replace(/-dark$/, '')
-			document.querySelectorAll('[data-theme-btn]').forEach(function(btn) {
-				btn.classList.toggle('active', btn.getAttribute('data-theme-btn') === family)
-			})
-		}
-		syncThemeButtons()
+		// Single toggle button is always active
+		document.querySelectorAll('[data-theme-btn]').forEach(function(btn) {
+			btn.classList.add('active')
+		})
 	})()
 	</script>
 </body>
