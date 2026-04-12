@@ -5,26 +5,7 @@ export default {
 	theme: {
 		extend: {
 			colors: {
-				// Colors that need opacity-modifier support (border/60, bg-muted/60, bg-card/80, etc.)
-				// use rgb(var(--x-rgb) / <alpha-value>); channels defined in app.css :root block.
-				border: ({ opacityValue }) =>
-					opacityValue !== undefined
-						? `rgb(var(--border-rgb) / ${opacityValue})`
-						: 'var(--border)',
-				muted: {
-					DEFAULT: ({ opacityValue }) =>
-						opacityValue !== undefined
-							? `rgb(var(--muted-rgb) / ${opacityValue})`
-							: 'var(--muted)',
-					foreground: 'var(--muted-foreground)',
-				},
-				card: {
-					DEFAULT: ({ opacityValue }) =>
-						opacityValue !== undefined
-							? `rgb(var(--card-rgb) / ${opacityValue})`
-							: 'var(--card)',
-					foreground: 'var(--card-foreground)',
-				},
+				border: 'var(--border)',
 				input: 'var(--input)',
 				ring: 'var(--ring)',
 				background: 'var(--background)',
@@ -41,9 +22,17 @@ export default {
 					DEFAULT: 'var(--destructive)',
 					foreground: 'var(--destructive-foreground)',
 				},
+				muted: {
+					DEFAULT: 'var(--muted)',
+					foreground: 'var(--muted-foreground)',
+				},
 				accent: {
 					DEFAULT: 'var(--accent)',
 					foreground: 'var(--accent-foreground)',
+				},
+				card: {
+					DEFAULT: 'var(--card)',
+					foreground: 'var(--card-foreground)',
 				},
 				popover: {
 					DEFAULT: 'var(--popover)',

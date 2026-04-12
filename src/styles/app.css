@@ -12,15 +12,6 @@
 @layer base {
 	:root {
 		--radius: 0.5rem;
-		/* RGB channels for Tailwind opacity-modifier support (border/xx, bg-muted/xx, bg-card/xx) */
-		--border-rgb: 217 210 201;
-		--muted-rgb: 138 125 111;
-		--card-rgb: 255 255 255;
-	}
-	[data-theme="dark"] {
-		--border-rgb: 61 52 44;
-		--muted-rgb: 138 125 111;
-		--card-rgb: 42 36 32;
 	}
 
 	* {
@@ -104,7 +95,7 @@
 
 /* Memorize pill */
 .memorize-pill {
-	@apply rounded-xl border border-border/60 bg-muted/60 px-4 py-2 shadow-sm transition-all duration-300;
+	@apply rounded-xl border border-border bg-card px-4 py-2 shadow-sm transition-all duration-300;
 }
 .memorize-pill[data-state="memorizing"] {
 	@apply border-amber-400/60 bg-amber-50/80 dark:border-amber-500/40 dark:bg-amber-500/10;
@@ -118,7 +109,7 @@
 
 /* Pineapple progress tracker */
 .pineapple-progress {
-	@apply space-y-2 rounded-2xl border border-border/60 bg-muted/60 p-4 shadow-sm transition-all duration-500;
+	@apply space-y-2 rounded-2xl border border-border bg-card p-4 shadow-sm transition-all duration-500;
 }
 .pineapple-progress.success {
 	@apply border-emerald-400/60 bg-emerald-50/80 dark:border-emerald-500/40 dark:bg-emerald-500/10;
@@ -163,7 +154,7 @@
 
 /* Pineapple result stats */
 .pineapple-stats {
-	@apply flex items-center gap-3 overflow-hidden rounded-xl bg-card/80 px-4 py-2 text-sm;
+	@apply flex items-center gap-3 overflow-hidden rounded-xl bg-card px-4 py-2 text-sm;
 	max-height: 0;
 	opacity: 0;
 	transition: max-height 0.5s ease, opacity 0.4s ease, padding 0.4s ease;
@@ -183,7 +174,7 @@
 	@apply font-mono text-base font-bold tabular-nums;
 }
 .pineapple-stats-divider {
-	@apply h-6 w-px bg-border/60;
+	@apply h-6 w-px bg-border;
 }
 /* Personal best celebration overlay */
 #pb-celebration {
