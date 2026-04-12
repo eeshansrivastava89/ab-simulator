@@ -1,0 +1,54 @@
+{
+  "status": "significant",
+  "decision": "Do NOT ship Variant B \u2014 guardrail metrics show significant drops in completion and engagement.",
+  "metrics": [
+    {
+      "label": "Completion Time",
+      "value": "+3.1s",
+      "delta": "+51.3%",
+      "delta_direction": "up",
+      "context": "p=0.002, significant"
+    },
+    {
+      "label": "Completion Rate",
+      "value": "70%",
+      "delta": "-21.2%",
+      "delta_direction": "down",
+      "context": "vs 89% control"
+    },
+    {
+      "label": "Repeat Rate",
+      "value": "58%",
+      "delta": "-5.9pp",
+      "delta_direction": "down",
+      "context": "vs 64% control"
+    },
+    {
+      "label": "Effect Size",
+      "value": "d=0.37",
+      "context": "small"
+    }
+  ],
+  "raw_stats": {
+    "p_value": 0.001798,
+    "cohens_d": 0.3734,
+    "mean_a": 6.039,
+    "mean_b": 9.138,
+    "std_a": 8.118,
+    "std_b": 8.474,
+    "completion_rate_a": 0.8882,
+    "completion_rate_b": 0.6995,
+    "repeat_rate_a": 0.6364,
+    "repeat_rate_b": 0.5775,
+    "observed_power": 0.8813,
+    "srm_p_value": 0.027708
+  },
+  "warnings": [
+    "Significant drop in completion rate (89% \u2192 70%)"
+  ],
+  "methodology": "Welch's t-test (primary), Chi-square (completion rate), Z-test (repeat rate)",
+  "power_analysis": "88% power \u2014 need 114 per group for 80%",
+  "sample_size_a": 143,
+  "sample_size_b": 142,
+  "generated_at": "2026-04-12T03:46:23.567845Z"
+}
