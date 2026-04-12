@@ -56,7 +56,7 @@
 }
 
 .theme-pill.active {
-	background: var(--muted);
+	background: var(--secondary);
 	border-color: color-mix(in srgb, var(--foreground) 20%, transparent);
 	color: var(--foreground);
 }

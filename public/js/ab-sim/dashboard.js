@@ -388,7 +388,7 @@
 		container.innerHTML = `
 			<div class="max-h-72 overflow-auto rounded-lg border border-border">
 				<table class="w-full text-xs">
-					<thead class="sticky top-0 bg-muted text-[10px] uppercase tracking-wide text-muted-foreground">
+					<thead class="sticky top-0 bg-secondary text-[10px] uppercase tracking-wide text-muted-foreground">
 						<tr>
 							${columns.map((col) => `<th class="whitespace-nowrap px-2 py-2 font-semibold">${colLabels[col] || col}</th>`).join('')}
 						</tr>
@@ -397,7 +397,7 @@
 						${completions
 							.map(
 								(row, i) => `
-							<tr class="${i % 2 === 0 ? 'bg-background' : 'bg-muted/20'} hover:bg-muted/40 transition-colors">
+							<tr class="${i % 2 === 0 ? 'bg-background' : 'bg-secondary'} hover:bg-accent transition-colors">
 								${columns
 									.map((col) => {
 										const val = row[col] ?? '—'
