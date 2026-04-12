@@ -1,54 +1,125 @@
 ---
 import Layout from '../../layouts/Layout.astro'
+import NotebookSummaryCard from '../../components/NotebookSummaryCard.astro'
+import { renderNotebook, loadLocalNotebook, loadLocalSummary } from '../../lib/notebook-renderer'
+
+const ipynbPath = 'notebooks/ab_test_analysis.ipynb'
+const summaryPath = 'notebooks/ab_test_analysis.summary.json'
+
+const ipynb = loadLocalNotebook(ipynbPath)
+const summary = loadLocalSummary(summaryPath)
+const notebookHtml = ipynb ? renderNotebook(ipynb) : '<p>Notebook not found.</p>'
+
+// Simple TOC extraction from rendered HTML (h2/h3 headings)
+const tocEntries: { id: string; text: string; level: number }[] = []
+let processedHtml = notebookHtml
+const headingRegex = /<(h[23])([^>]*)>([\s\S]*?)<\/\1>/gi
+processedHtml = notebookHtml.replace(headingRegex, (match, tag, attrs, content) => {
+	const level = parseInt(tag[1])
+	const text = content.replace(/<[^>]*>/g, '').trim()
+	if (!text) return match
+	const id = text.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').slice(0, 60)
+	tocEntries.push({ id, text, level })
+	if (attrs.includes('id=')) return match
+	return `<${tag}${attrs} id="${id}">${content}</${tag}>`
+})
 ---
 
-<Layout title="Analysis: Pineapple Finder Difficulty" description="Full statistical analysis of the A/B testing memory game experiment.">
-	<div class="space-y-4">
-		<div class="flex items-center justify-between">
+<Layout title="A/B Test Analysis" description="Full statistical analysis of the A/B testing memory game experiment.">
+	<div class="analysis-page">
+		<header class="analysis-header">
 			<div>
-				<h2 class="text-2xl font-bold">A/B Test Analysis</h2>
-				<p class="text-sm text-muted-foreground">Full Jupyter notebook with statistical methodology and results</p>
+				<h1 class="analysis-title">A/B Test: Pineapple Finder Difficulty</h1>
+				<p class="analysis-subtitle">Do NOT ship Variant B — guardrail metrics show significant drops in completion and engagement.</p>
 			</div>
-			<a href="/" class="inline-flex items-center gap-1.5 rounded-md border border-border/60 px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
-				<svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-				Back to game
-			</a>
-		</div>
-		<div class="rounded-lg border border-border overflow-hidden" id="notebook-container">
-			<iframe
-				src="/analysis/ab-test-analysis.html"
-				class="w-full border-0"
-				style="min-height: 80vh;"
-				title="A/B Test Analysis Notebook"
-			></iframe>
-		</div>
+			<div class="analysis-header-actions">
+				<a href="https://github.com/eeshansrivastava89/ab-simulator/blob/main/notebooks/ab_test_analysis.ipynb" target="_blank" rel="noopener noreferrer" class="analysis-github-link">
+					View on GitHub →
+				</a>
+				<a href="/" class="analysis-back-link">← Back to game</a>
+			</div>
+		</header>
+
+		<NotebookSummaryCard summary={summary} />
+
+		<div class="notebook-content" set:html={processedHtml} />
 	</div>
 </Layout>
 
-<script>
-	const iframe = document.querySelector('iframe')
-	if (!iframe) throw new Error('no iframe')
-
-	function applyTheme() {
-		const isDark = document.documentElement.classList.contains('dark')
-		iframe.style.filter = isDark ? 'invert(1) hue-rotate(180deg)' : 'none'
+<style>
+	.analysis-page {
+		max-width: 860px;
+		margin: 0 auto;
+		padding: 32px 24px 64px;
 	}
 
-	iframe.addEventListener('load', () => {
-		try {
-			// Auto-resize
-			const height = iframe.contentDocument?.documentElement?.scrollHeight
-			if (height) iframe.style.height = height + 'px'
+	.analysis-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-start;
+		gap: 16px;
+		flex-wrap: wrap;
+		margin-bottom: 24px;
+	}
 
-			// Double-invert images so they look normal in dark mode
-			const style = iframe.contentDocument.createElement('style')
-			style.textContent = 'img, .jp-OutputArea-output svg, canvas { filter: invert(1) hue-rotate(180deg); }'
-			iframe.contentDocument.head.appendChild(style)
-		} catch (e) {}
-		applyTheme()
-	})
+	.analysis-title {
+		font-size: 28px;
+		font-weight: 700;
+		color: var(--foreground);
+		line-height: 1.2;
+		margin: 0 0 8px;
+	}
 
-	// Watch for theme changes
-	const observer = new MutationObserver(applyTheme)
-	observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
-</script>
+	.analysis-subtitle {
+		font-size: 16px;
+		color: var(--muted-foreground);
+		line-height: 1.5;
+		margin: 0;
+	}
+
+	.analysis-header-actions {
+		display: flex;
+		gap: 12px;
+		align-items: center;
+		flex-shrink: 0;
+	}
+
+	.analysis-github-link,
+	.analysis-back-link {
+		font-size: 13px;
+		font-weight: 600;
+		text-decoration: none;
+		padding: 6px 14px;
+		border-radius: 8px;
+		transition: background-color 0.15s ease;
+	}
+
+	.analysis-github-link {
+		color: var(--primary);
+		border: 1px solid var(--border);
+	}
+
+	.analysis-github-link:hover {
+		background: var(--accent);
+	}
+
+	.analysis-back-link {
+		color: var(--muted-foreground);
+	}
+
+	.analysis-back-link:hover {
+		color: var(--foreground);
+	}
+
+	@media (max-width: 640px) {
+		.analysis-page {
+			padding: 20px 16px 48px;
+		}
+		.analysis-header {
+			flex-direction: column;
+		}
+		.analysis-title {
+			font-size: 22px;
+		}
+	}
+</style>

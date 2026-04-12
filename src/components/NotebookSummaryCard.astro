@@ -1,0 +1,256 @@
+---
+// SYNCED from datascienceapps/src/components/NotebookSummaryCard.astro
+import type { NotebookSummary } from '../lib/notebook-renderer'
+
+interface Props {
+	summary: NotebookSummary | null
+}
+
+const { summary } = Astro.props
+
+const STATUS_LABELS: Record<NotebookSummary['status'], string> = {
+	significant: 'Significant',
+	not_significant: 'Not significant',
+	inconclusive: 'Inconclusive',
+	error: 'Error',
+}
+
+function formatTimestamp(iso: string): string {
+	const d = new Date(iso)
+	if (isNaN(d.getTime())) return iso
+	return d.toLocaleString('en-US', {
+		year: 'numeric',
+		month: 'short',
+		day: 'numeric',
+		hour: '2-digit',
+		minute: '2-digit',
+	})
+}
+
+// Note: `delta_direction` is typed as 'up' | 'down' but the component falls back to
+// 'flat' for missing directions. '.nb-summary-metric-delta-flat' is defined in the
+// style block and gives a muted, no-arrow treatment. This is a component-local
+// convention — the type intentionally excludes 'flat'.
+const statusLabel = summary ? STATUS_LABELS[summary.status] : ''
+const warningCount = summary?.warnings?.length ?? 0
+---
+
+{summary && (
+	<aside class={`nb-summary-card nb-summary-${summary.status}`} aria-label="Experiment summary">
+		<header class="nb-summary-header">
+			<span class="nb-summary-status">{statusLabel}</span>
+			{warningCount > 0 && (
+				<span class="nb-summary-warnings-count">
+					{warningCount} warning{warningCount > 1 ? 's' : ''}
+				</span>
+			)}
+			<span class="nb-summary-updated">Updated {formatTimestamp(summary.generated_at)}</span>
+		</header>
+
+		<p class="nb-summary-decision">{summary.decision}</p>
+
+		{summary.metrics.length > 0 && (
+			<div class="nb-summary-metrics">
+				{summary.metrics.map((m) => (
+					<div class="nb-summary-metric">
+						<div class="nb-summary-metric-label">{m.label}</div>
+						<div class="nb-summary-metric-value-row">
+							<span class="nb-summary-metric-value">{m.value}</span>
+							{m.delta && (
+								<span class={`nb-summary-metric-delta nb-summary-metric-delta-${m.delta_direction ?? 'flat'}`}>
+									{m.delta_direction === 'up' ? '↑' : m.delta_direction === 'down' ? '↓' : ''}{m.delta}
+								</span>
+							)}
+						</div>
+						{m.context && <div class="nb-summary-metric-context">{m.context}</div>}
+					</div>
+				))}
+			</div>
+		)}
+
+		{warningCount > 0 && summary.warnings && (
+			<ul class="nb-summary-warnings">
+				{summary.warnings.map((w) => (
+					<li>{w}</li>
+				))}
+			</ul>
+		)}
+
+		{summary.methodology && (
+			<footer class="nb-summary-footer">
+				<span class="nb-summary-footer-label">Methodology:</span> {summary.methodology}
+			</footer>
+		)}
+	</aside>
+)}
+
+<style>
+	.nb-summary-card {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+		padding: 20px 22px;
+		border: 1px solid var(--input);
+		border-radius: 12px;
+		background: var(--card-raised);
+		margin-bottom: 28px;
+	}
+
+	.nb-summary-header {
+		display: flex;
+		align-items: baseline;
+		gap: 12px;
+		flex-wrap: wrap;
+		font-family: 'JetBrains Mono', monospace;
+		font-size: 12px;
+	}
+
+	.nb-summary-status {
+		padding: 3px 10px;
+		border-radius: 999px;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		font-size: 11px;
+		background: var(--input);
+		color: var(--foreground);
+	}
+
+	.nb-summary-significant .nb-summary-status {
+		background: color-mix(in oklab, var(--green) 18%, transparent);
+		color: var(--green);
+	}
+
+	.nb-summary-not_significant .nb-summary-status {
+		background: color-mix(in oklab, var(--muted) 18%, transparent);
+		color: var(--muted-foreground);
+	}
+
+	.nb-summary-inconclusive .nb-summary-status {
+		background: color-mix(in oklab, var(--primary) 18%, transparent);
+		color: var(--primary);
+	}
+
+	.nb-summary-error .nb-summary-status {
+		background: color-mix(in oklab, var(--red) 18%, transparent);
+		color: var(--red);
+	}
+
+	.nb-summary-warnings-count {
+		color: var(--primary);
+		font-weight: 600;
+	}
+
+	.nb-summary-updated {
+		margin-left: auto;
+		color: var(--muted);
+	}
+
+	.nb-summary-decision {
+		font-family: 'Playfair Display', Georgia, serif;
+		font-size: 18px;
+		line-height: 1.4;
+		color: var(--foreground);
+		margin: 0;
+		text-wrap: balance;
+	}
+
+	.nb-summary-metrics {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 16px 24px;
+	}
+
+	@media (min-width: 640px) {
+		.nb-summary-metrics {
+			grid-template-columns: repeat(4, 1fr);
+		}
+	}
+
+	.nb-summary-metric {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+	}
+
+	.nb-summary-metric-label {
+		font-family: 'JetBrains Mono', monospace;
+		font-size: 11px;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		color: var(--muted);
+	}
+
+	.nb-summary-metric-value-row {
+		display: flex;
+		align-items: baseline;
+		gap: 6px;
+	}
+
+	.nb-summary-metric-value {
+		font-family: 'Inter', system-ui, sans-serif;
+		font-size: 22px;
+		font-weight: 600;
+		color: var(--foreground);
+	}
+
+	.nb-summary-metric-delta {
+		font-family: 'JetBrains Mono', monospace;
+		font-size: 12px;
+		font-weight: 600;
+	}
+
+	.nb-summary-metric-delta-up {
+		color: var(--green);
+	}
+
+	.nb-summary-metric-delta-down {
+		color: var(--red);
+	}
+
+	.nb-summary-metric-delta-flat {
+		color: var(--muted);
+	}
+
+	.nb-summary-metric-context {
+		font-family: 'JetBrains Mono', monospace;
+		font-size: 11px;
+		color: var(--muted);
+		line-height: 1.4;
+	}
+
+	.nb-summary-warnings {
+		list-style: none;
+		margin: 0;
+		padding: 12px 14px;
+		border: 1px solid var(--input);
+		border-radius: 8px;
+		font-family: 'Inter', system-ui, sans-serif;
+		font-size: 13px;
+		line-height: 1.5;
+		color: var(--muted-foreground);
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+	}
+
+	.nb-summary-warnings li::before {
+		content: '⚠ ';
+		color: var(--primary);
+		font-weight: 600;
+	}
+
+	.nb-summary-footer {
+		font-family: 'JetBrains Mono', monospace;
+		font-size: 11px;
+		color: var(--muted);
+		padding-top: 12px;
+		border-top: 1px solid var(--input);
+		line-height: 1.5;
+	}
+
+	.nb-summary-footer-label {
+		font-weight: 600;
+		color: var(--muted-foreground);
+	}
+</style>
