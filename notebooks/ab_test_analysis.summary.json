@@ -5,7 +5,7 @@
     {
       "label": "Completion Time",
       "value": "+3.2s",
-      "delta": "+53.7%",
+      "delta": "+53.8%",
       "delta_direction": "up",
       "context": "p=0.001, significant"
     },
@@ -19,9 +19,9 @@
     {
       "label": "Repeat Rate",
       "value": "57%",
-      "delta": "-6.2pp",
+      "delta": "-5.7pp",
       "delta_direction": "down",
-      "context": "vs 64% control"
+      "context": "vs 63% control"
     },
     {
       "label": "Effect Size",
@@ -30,25 +30,25 @@
     }
   ],
   "raw_stats": {
-    "p_value": 0.00114,
-    "cohens_d": 0.3857,
-    "mean_a": 5.916,
+    "p_value": 0.001079,
+    "cohens_d": 0.3871,
+    "mean_a": 5.91,
     "mean_b": 9.092,
-    "std_a": 8.007,
+    "std_a": 7.98,
     "std_b": 8.461,
-    "completion_rate_a": 0.8916,
+    "completion_rate_a": 0.8922,
     "completion_rate_b": 0.701,
-    "repeat_rate_a": 0.6351,
+    "repeat_rate_a": 0.6309,
     "repeat_rate_b": 0.5734,
-    "observed_power": 0.9064,
-    "srm_p_value": 0.048208
+    "observed_power": 0.9092,
+    "srm_p_value": 0.054739
   },
   "warnings": [
     "Significant drop in completion rate (89% \u2192 70%)"
   ],
   "methodology": "Welch's t-test (primary), Chi-square (completion rate), Z-test (repeat rate)",
-  "power_analysis": "91% power \u2014 need 107 per group for 80%",
-  "sample_size_a": 148,
+  "power_analysis": "91% power \u2014 need 106 per group for 80%",
+  "sample_size_a": 149,
   "sample_size_b": 143,
-  "generated_at": "2026-04-14T03:01:28.488997Z"
+  "generated_at": "2026-04-14T04:54:57.321391Z"
 }
