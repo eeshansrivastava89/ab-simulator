@@ -1,0 +1,34 @@
+---
+import type { TocEntry } from '../lib/toc'
+
+interface Props {
+	toc: TocEntry[]
+	topLabel?: string
+	minEntries?: number
+}
+
+const { toc, topLabel, minEntries = 3 } = Astro.props
+const visible = toc.length >= minEntries
+---
+
+{visible && (
+	<aside class="article-toc" aria-label="Table of contents">
+		<div class="article-toc-label">On this page</div>
+		<nav class="article-toc-nav">
+			{topLabel && (
+				<a
+					href="#top"
+					class="article-toc-link article-toc-top"
+					data-toc-link="__top"
+				>{topLabel}</a>
+			)}
+			{toc.map((entry) => (
+				<a
+					href={`#${entry.id}`}
+					class:list={['article-toc-link', `article-toc-level-${entry.level}`]}
+					data-toc-link={entry.id}
+				>{entry.text}</a>
+			))}
+		</nav>
+	</aside>
+)}

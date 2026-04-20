@@ -1,7 +1,9 @@
 ---
 import Layout from '../../layouts/Layout.astro'
 import NotebookSummaryCard from '../../components/NotebookSummaryCard.astro'
+import ArticleTOC from '../../components/ArticleTOC.astro'
 import { renderNotebook, loadLocalNotebook, loadLocalSummary } from '../../lib/notebook-renderer'
+import { extractToc } from '../../lib/toc'
 
 const ipynbPath = 'notebooks/ab_test_analysis.ipynb'
 const summaryPath = 'notebooks/ab_test_analysis.summary.json'
@@ -10,26 +12,14 @@ const ipynb = loadLocalNotebook(ipynbPath)
 const summary = loadLocalSummary(summaryPath)
 const notebookHtml = ipynb ? renderNotebook(ipynb) : '<p>Notebook not found.</p>'
 
-// Simple TOC extraction from rendered HTML (h2/h3 headings)
-const tocEntries: { id: string; text: string; level: number }[] = []
-let processedHtml = notebookHtml
-const headingRegex = /<(h[23])([^>]*)>([\s\S]*?)<\/\1>/gi
-processedHtml = notebookHtml.replace(headingRegex, (match, tag, attrs, content) => {
-	const level = parseInt(tag[1])
-	const text = content.replace(/<[^>]*>/g, '').trim()
-	if (!text) return match
-	const id = text.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').slice(0, 60)
-	tocEntries.push({ id, text, level })
-	if (attrs.includes('id=')) return match
-	return `<${tag}${attrs} id="${id}">${content}</${tag}>`
-})
+const { html: processedHtml, toc: tocEntries } = extractToc(notebookHtml)
 ---
 
 <Layout title="A/B Test Analysis" description="Full statistical analysis of the A/B testing memory game experiment.">
 	<div class="analysis-page">
 		<header class="analysis-header">
 			<div>
-				<h1 class="analysis-title">A/B Test: Pineapple Finder Difficulty</h1>
+				<h1 class="analysis-title" id="top">A/B Test: Pineapple Finder Difficulty</h1>
 				<p class="analysis-subtitle">Do NOT ship Variant B — guardrail metrics show significant drops in completion and engagement.</p>
 			</div>
 			<div class="analysis-header-actions">
@@ -44,7 +34,110 @@ processedHtml = notebookHtml.replace(headingRegex, (match, tag, attrs, content) 
 
 		<div class="notebook-content" set:html={processedHtml} />
 	</div>
+
+	<ArticleTOC toc={tocEntries} topLabel="A/B Test: Pineapple Finder Difficulty" />
 </Layout>
+
+<script>
+(function () {
+	var toc = document.querySelector('.article-toc')
+	if (!toc) return
+	var tocNav = toc.querySelector('.article-toc-nav')
+	if (!tocNav) return
+
+	var titleEl = document.getElementById('top')
+	var links = Array.prototype.slice.call(tocNav.querySelectorAll('[data-toc-link]'))
+	if (!links.length) return
+
+	var targets = []
+	links.forEach(function (link) {
+		var key = link.getAttribute('data-toc-link')
+		if (!key) return
+		if (key === '__top') {
+			if (titleEl) targets.push({ el: titleEl, key: key })
+			return
+		}
+		var headingEl = document.getElementById(key)
+		if (headingEl) targets.push({ el: headingEl, key: key })
+	})
+	if (!targets.length) return
+
+	// Click -> smooth scroll
+	tocNav.addEventListener('click', function (e) {
+		var targetEl = e.target && e.target.closest ? e.target.closest('[data-toc-link]') : null
+		if (!targetEl) return
+		var key = targetEl.getAttribute('data-toc-link')
+		if (!key) return
+		e.preventDefault()
+		if (key === '__top') {
+			window.scrollTo({ top: 0, behavior: 'smooth' })
+			if (history.replaceState) {
+				history.replaceState(history.state, '', window.location.pathname + window.location.search)
+			}
+			return
+		}
+		var headingEl = document.getElementById(key)
+		if (!headingEl) return
+		headingEl.scrollIntoView({ behavior: 'smooth', block: 'start' })
+		if (history.replaceState) {
+			history.replaceState(history.state, '', '#' + key)
+		}
+	})
+
+	// Scroll spy
+	if (typeof IntersectionObserver !== 'undefined') {
+		var visibleKeys = {}
+		var observer = new IntersectionObserver(
+			function (entries) {
+				entries.forEach(function (entry) {
+					var matchKey = null
+					for (var i = 0; i < targets.length; i++) {
+						if (targets[i].el === entry.target) {
+							matchKey = targets[i].key
+							break
+						}
+					}
+					if (!matchKey) return
+					if (entry.isIntersecting) {
+						visibleKeys[matchKey] = true
+					} else {
+						delete visibleKeys[matchKey]
+					}
+
+					var activeKey = null
+					for (var j = 0; j < targets.length; j++) {
+						if (visibleKeys[targets[j].key]) {
+							activeKey = targets[j].key
+						}
+					}
+					// If nothing visible, highlight the first target above viewport
+					if (!activeKey) {
+						var scrollY = window.scrollY || document.documentElement.scrollTop
+						for (var k = targets.length - 1; k >= 0; k--) {
+							var rect = targets[k].el.getBoundingClientRect()
+							if (rect.top + scrollY < scrollY + 200) {
+								activeKey = targets[k].key
+								break
+							}
+						}
+					}
+
+					links.forEach(function (link) {
+						var linkKey = link.getAttribute('data-toc-link')
+						if (linkKey === activeKey) {
+							link.classList.add('active')
+						} else {
+							link.classList.remove('active')
+						}
+					})
+				})
+			},
+			{ rootMargin: '-80px 0px -60% 0px', threshold: 0 }
+		)
+		targets.forEach(function (t) { observer.observe(t.el) })
+	}
+})()
+</script>
 
 <style>
 	.analysis-page {
