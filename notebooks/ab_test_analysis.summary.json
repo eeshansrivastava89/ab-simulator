@@ -5,9 +5,9 @@
     {
       "label": "Completion Time",
       "value": "+3.3s",
-      "delta": "+56.4%",
+      "delta": "+57.0%",
       "delta_direction": "up",
-      "context": "p=0.001, significant"
+      "context": "p=0.000, significant"
     },
     {
       "label": "Completion Rate",
@@ -19,36 +19,36 @@
     {
       "label": "Repeat Rate",
       "value": "58%",
-      "delta": "-3.1pp",
+      "delta": "-2.7pp",
       "delta_direction": "down",
       "context": "vs 61% control"
     },
     {
       "label": "Effect Size",
-      "value": "d=0.40",
+      "value": "d=0.41",
       "context": "small"
     }
   ],
   "raw_stats": {
-    "p_value": 0.000544,
-    "cohens_d": 0.4031,
-    "mean_a": 5.772,
+    "p_value": 0.000485,
+    "cohens_d": 0.4062,
+    "mean_a": 5.75,
     "mean_b": 9.028,
-    "std_a": 7.755,
+    "std_a": 7.735,
     "std_b": 8.42,
-    "completion_rate_a": 0.8883,
+    "completion_rate_a": 0.8889,
     "completion_rate_b": 0.7039,
-    "repeat_rate_a": 0.6101,
+    "repeat_rate_a": 0.6062,
     "repeat_rate_b": 0.5793,
-    "observed_power": 0.9381,
-    "srm_p_value": 0.168807
+    "observed_power": 0.942,
+    "srm_p_value": 0.185714
   },
   "warnings": [
     "Significant drop in completion rate (89% \u2192 70%)"
   ],
   "methodology": "Welch's t-test (primary), Chi-square (completion rate), Z-test (repeat rate)",
-  "power_analysis": "94% power \u2014 need 98 per group for 80%",
-  "sample_size_a": 159,
+  "power_analysis": "94% power \u2014 need 97 per group for 80%",
+  "sample_size_a": 160,
   "sample_size_b": 145,
-  "generated_at": "2026-04-20T20:14:09.292995Z"
+  "generated_at": "2026-04-20T22:14:13.299650Z"
 }
