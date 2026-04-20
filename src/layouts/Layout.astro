@@ -146,14 +146,9 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site).href
 		</div>
 	</footer>
 
-	<!-- Active nav pill + theme button state -->
+	<!-- Active nav pill state -->
 	<script is:inline>
 	(function() {
-		// Theme buttons
-		document.querySelectorAll('[data-theme-btn]').forEach(function(btn) {
-			btn.classList.add('active')
-		})
-		// Active nav pill
 		var path = window.location.pathname
 		document.querySelectorAll('[data-nav-pill]').forEach(function(pill) {
 			var href = pill.getAttribute('href')
