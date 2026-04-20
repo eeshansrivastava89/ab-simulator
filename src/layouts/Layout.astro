@@ -98,16 +98,25 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site).href
 					</p>
 				</div>
 			</div>
-			<div class="flex items-center gap-2 sm:gap-4 shrink-0">
+			<div class="flex items-center gap-2 sm:gap-3 shrink-0">
+				<!-- Nav Pills -->
+				<nav class="hidden sm:flex items-center gap-1.5" aria-label="Primary">
+					<a href="/" class="nav-pill" data-nav-pill>Game</a>
+					<a href="/analysis/" class="nav-pill" data-nav-pill>Analysis</a>
+				</nav>
+
 				<!-- Theme Toggle -->
-				<div class="theme-switcher">
-					<button data-theme-btn="toggle" class="theme-pill active" title="Toggle light/dark" onclick="window.__toggleTheme()">
-						<span class="theme-dot" style="background: #c9a882;"></span>
-						<span class="theme-pill-name">Theme</span>
-						<svg class="theme-icon sun" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-						<svg class="theme-icon moon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-					</button>
-				</div>
+				<button
+					class="theme-toggle-icon"
+					type="button"
+					title="Toggle dark mode"
+					aria-label="Toggle dark mode"
+					onclick="window.__toggleTheme()"
+				>
+					<svg class="theme-icon sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+					<svg class="theme-icon moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+				</button>
+
 				<a
 					href="https://github.com/eeshansrivastava89/ab-simulator"
 					target="_blank"
@@ -137,12 +146,20 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site).href
 		</div>
 	</footer>
 
-	<!-- Sync theme button active state after DOM renders -->
+	<!-- Active nav pill + theme button state -->
 	<script is:inline>
 	(function() {
-		// Single toggle button is always active
+		// Theme buttons
 		document.querySelectorAll('[data-theme-btn]').forEach(function(btn) {
 			btn.classList.add('active')
+		})
+		// Active nav pill
+		var path = window.location.pathname
+		document.querySelectorAll('[data-nav-pill]').forEach(function(pill) {
+			var href = pill.getAttribute('href')
+			if (href && (path === href || (href !== '/' && path.startsWith(href)))) {
+				pill.classList.add('active')
+			}
 		})
 	})()
 	</script>

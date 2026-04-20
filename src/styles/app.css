@@ -549,3 +549,149 @@
 .notebook-content .nb-error-banner a:hover {
 	text-decoration: underline;
 }
+
+/* ═══════════════════════════════════════════════
+   Header nav pills + theme toggle
+   ═══════════════════════════════════════════════ */
+
+.nav-pill {
+	padding: 5px 12px;
+	border-radius: 6px;
+	border: 1px solid var(--border);
+	background: var(--card);
+	color: var(--foreground);
+	font-family: 'Inter', system-ui, sans-serif;
+	font-size: 13px;
+	font-weight: 500;
+	cursor: pointer;
+	transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+	text-decoration: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.nav-pill:hover,
+.nav-pill.active {
+	background: var(--accent);
+	border-color: var(--primary);
+	color: var(--primary);
+	text-decoration: none;
+}
+
+.theme-toggle-icon {
+	padding: 6px;
+	border-radius: 6px;
+	border: 1px solid var(--border);
+	background: var(--card);
+	color: var(--muted-foreground);
+	cursor: pointer;
+	transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.theme-toggle-icon:hover {
+	background: var(--accent);
+	border-color: var(--primary);
+	color: var(--primary);
+}
+
+.theme-toggle-icon .theme-icon {
+	display: block;
+}
+
+/* Industry-standard: show the icon of the theme the user would switch TO */
+[data-theme='light'] .theme-toggle-icon .theme-icon.sun,
+[data-theme='dark'] .theme-toggle-icon .theme-icon.moon {
+	display: none;
+}
+
+/* ═══════════════════════════════════════════════
+   Article TOC — sticky sidebar for analysis page
+   ═══════════════════════════════════════════════ */
+
+.article-toc {
+	display: none;
+	font-family: 'Inter', system-ui, sans-serif;
+	font-size: 13px;
+	line-height: 1.45;
+}
+
+.article-toc-label {
+	font-size: 11px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: var(--muted);
+	margin-bottom: 12px;
+	padding-bottom: 8px;
+	border-bottom: 1px solid var(--input);
+}
+
+.article-toc-nav {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.article-toc-link {
+	display: block;
+	padding: 5px 8px;
+	color: var(--muted-foreground);
+	text-decoration: none;
+	border-radius: 4px;
+	transition: color 0.15s ease;
+	text-wrap: balance;
+}
+
+.article-toc-link:hover {
+	color: var(--foreground);
+	text-decoration: none;
+}
+
+.article-toc-link.active {
+	color: var(--primary);
+	font-weight: 600;
+}
+
+.article-toc-level-3 {
+	padding-left: 20px;
+	font-size: 12px;
+}
+
+.article-toc-top {
+	font-family: 'Playfair Display', Georgia, serif;
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--foreground);
+	margin-bottom: 10px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid var(--input);
+	text-wrap: balance;
+}
+
+.article-toc-top:hover {
+	color: var(--primary);
+}
+
+.article-toc-top.active {
+	color: var(--primary);
+}
+
+@media (min-width: 1320px) {
+	.article-toc {
+		display: block;
+		position: fixed;
+		top: 100px;
+		right: 32px;
+		width: 200px;
+		max-height: calc(100vh - 140px);
+		overflow-y: auto;
+		overscroll-behavior: contain;
+		padding-right: 8px;
+		scrollbar-width: thin;
+		z-index: 50;
+	}
+}
