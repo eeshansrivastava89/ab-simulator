@@ -546,6 +546,144 @@
 }
 
 /* ═══════════════════════════════════════════════
+   Leaderboard page — JS-rendered table rows need global selectors
+   ═══════════════════════════════════════════════ */
+
+.leaderboard-page .lb-table th {
+	position: sticky;
+	top: 0;
+	background: var(--secondary);
+	color: var(--muted-foreground);
+	font-size: 10px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	padding: 10px 12px;
+	text-align: left;
+	white-space: nowrap;
+}
+
+.leaderboard-page .lb-table td {
+	padding: 10px 12px;
+	font-size: 13px;
+	border-bottom: 1px solid var(--border);
+}
+
+.leaderboard-page .lb-table tbody tr:hover td {
+	background: var(--card-raised);
+}
+
+.leaderboard-page .lb-row--current td {
+	background: rgba(217, 119, 6, 0.06);
+}
+
+.leaderboard-page .lb-rank-chip {
+	@apply inline-flex h-6 w-6 items-center justify-center rounded-lg text-xs font-bold;
+}
+
+.leaderboard-page .lb-rank-chip--default {
+	background: var(--secondary);
+	color: var(--foreground);
+}
+
+.leaderboard-page .lb-rank-chip--rank-1 {
+	background: linear-gradient(135deg, #f9e9cc, #f5d0a0);
+	color: #92400e;
+}
+
+.leaderboard-page .lb-rank-chip--rank-2 {
+	background: linear-gradient(135deg, #e5e7eb, #d1d5db);
+	color: #374151;
+}
+
+.leaderboard-page .lb-rank-chip--rank-3 {
+	background: linear-gradient(135deg, #fde68a, #fbbf24);
+	color: #78350f;
+}
+
+.leaderboard-page .lb-variant-pill {
+	@apply inline-flex h-5 w-5 items-center justify-center rounded text-[10px] font-bold;
+}
+
+.leaderboard-page .lb-variant-pill--a {
+	background: #f9e9cc;
+	color: #92400e;
+}
+
+.leaderboard-page .lb-variant-pill--b {
+	background: #dbeafe;
+	color: #1e40af;
+}
+
+.leaderboard-page .lb-best-time--top {
+	color: var(--green);
+}
+
+.leaderboard-page .lb-location {
+	color: var(--muted-foreground);
+	font-size: 12px;
+}
+
+.leaderboard-page .lb-badges {
+	white-space: nowrap;
+	font-size: 18px;
+	letter-spacing: 0.08em;
+	line-height: 1;
+}
+
+.leaderboard-page .lb-you-label {
+	@apply ml-1 text-[10px] font-bold uppercase text-sky-600 dark:text-sky-300;
+}
+
+.leaderboard-page .filter-btn {
+	padding: 4px 12px;
+	border-radius: 6px;
+	border: 1px solid var(--border);
+	background: var(--card);
+	color: var(--muted-foreground);
+	font-size: 12px;
+	font-weight: 500;
+	cursor: pointer;
+	transition: all 0.15s ease;
+}
+
+.leaderboard-page .filter-btn.active {
+	background: var(--primary);
+	color: var(--primary-foreground);
+	border-color: var(--primary);
+}
+
+.leaderboard-page .filter-btn:disabled {
+	opacity: 0.4;
+	cursor: not-allowed;
+}
+
+:where([data-theme='dark']) .leaderboard-page .lb-rank-chip--rank-1 {
+	background: linear-gradient(135deg, #92400e, #b45309);
+	color: #fef3c7;
+}
+
+:where([data-theme='dark']) .leaderboard-page .lb-rank-chip--rank-2 {
+	background: linear-gradient(135deg, #4b5563, #6b7280);
+	color: #f3f4f6;
+}
+
+:where([data-theme='dark']) .leaderboard-page .lb-rank-chip--rank-3 {
+	background: linear-gradient(135deg, #b45309, #d97706);
+	color: #fef3c7;
+}
+
+:where([data-theme='dark']) .leaderboard-page .lb-variant-pill--a {
+	background: rgba(251, 191, 36, 0.15);
+	color: #fbbf24;
+}
+
+:where([data-theme='dark']) .leaderboard-page .lb-variant-pill--b {
+	background: rgba(137, 180, 250, 0.15);
+	color: #89b4fa;
+}
+
+/* ═══════════════════════════════════════════════
    Article TOC — sticky sidebar for analysis page
    ═══════════════════════════════════════════════ */
 
