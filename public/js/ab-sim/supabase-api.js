@@ -77,6 +77,12 @@
 		},
 		userRank(variant, username) {
 			return rpc('user_rank', { p_variant: variant, p_username: username })
+		},
+		globalLeaderboard(limit = 50, offset = 0, variant = null, sort = 'best_time', search = null) {
+			return rpc('global_leaderboard', { p_limit: limit, p_offset: offset, p_variant: variant, p_sort: sort, p_search: search })
+		},
+		leaderboardSummary() {
+			return rpc('leaderboard_summary', {})
 		}
 	}
 })();
