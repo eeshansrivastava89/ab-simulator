@@ -10,6 +10,10 @@ on:
 permissions:
   contents: write  # needed to commit notebook + sidecar updates back to main
 
+concurrency:
+  group: analyze-and-deploy-main
+  cancel-in-progress: false
+
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
@@ -46,7 +50,8 @@ jobs:
             echo "No changes to commit"
           else
             git commit -m "[bot] update notebook analysis $(date -u +%Y-%m-%dT%H:%MZ) [skip ci]"
-            git push
+            git pull --rebase origin main
+            git push origin HEAD:main
           fi
 
       - name: Deploy to Fly.io

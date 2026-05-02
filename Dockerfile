@@ -1,5 +1,5 @@
 # Build stage
-FROM node:22-alpine AS builder
+FROM node:24-alpine AS builder
 
 WORKDIR /app
 
@@ -32,9 +32,10 @@ RUN echo 'server { \
     root /usr/share/nginx/html; \
     index index.html; \
     port_in_redirect off; \
+    absolute_redirect off; \
     \
     location / { \
-        try_files $uri $uri/ /index.html; \
+        try_files $uri $uri/index.html /index.html; \
     } \
 }' > /etc/nginx/conf.d/default.conf
 

@@ -17,3 +17,12 @@ node_modules/
 
 # local reference artifacts
 mockups/
+internal-docs/
+
+# agent workspace notes (per-developer, not shared)
+.claude/
+.codex/
+.pi/
+
+# supabase local metadata
+supabase/.temp/
