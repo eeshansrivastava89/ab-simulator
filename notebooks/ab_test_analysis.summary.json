@@ -4,21 +4,21 @@
   "metrics": [
     {
       "label": "Completion Time",
-      "value": "+3.3s",
-      "delta": "+58.4%",
+      "value": "+3.2s",
+      "delta": "+57.4%",
       "delta_direction": "up",
       "context": "p=0.000, significant"
     },
     {
       "label": "Completion Rate",
       "value": "71%",
-      "delta": "-20.6%",
+      "delta": "-20.5%",
       "delta_direction": "down",
       "context": "vs 89% control"
     },
     {
       "label": "Repeat Rate",
-      "value": "57%",
+      "value": "56%",
       "delta": "-5.7pp",
       "delta_direction": "down",
       "context": "vs 62% control"
@@ -30,25 +30,25 @@
     }
   ],
   "raw_stats": {
-    "p_value": 0.000345,
-    "cohens_d": 0.412,
-    "mean_a": 5.64,
-    "mean_b": 8.933,
-    "std_a": 7.642,
-    "std_b": 8.367,
-    "completion_rate_a": 0.8919,
-    "completion_rate_b": 0.7081,
-    "repeat_rate_a": 0.6242,
-    "repeat_rate_b": 0.5676,
-    "observed_power": 0.9523,
-    "srm_p_value": 0.226623
+    "p_value": 0.000385,
+    "cohens_d": 0.4072,
+    "mean_a": 5.652,
+    "mean_b": 8.899,
+    "std_a": 7.62,
+    "std_b": 8.348,
+    "completion_rate_a": 0.8925,
+    "completion_rate_b": 0.7095,
+    "repeat_rate_a": 0.6205,
+    "repeat_rate_b": 0.5638,
+    "observed_power": 0.9492,
+    "srm_p_value": 0.2278
   },
   "warnings": [
     "Significant drop in completion rate (89% \u2192 71%)"
   ],
   "methodology": "Welch's t-test (primary), Chi-square (completion rate), Z-test (repeat rate)",
-  "power_analysis": "95% power \u2014 need 94 per group for 80%",
-  "sample_size_a": 165,
-  "sample_size_b": 148,
-  "generated_at": "2026-05-29T15:01:51.868526Z"
+  "power_analysis": "95% power \u2014 need 96 per group for 80%",
+  "sample_size_a": 166,
+  "sample_size_b": 149,
+  "generated_at": "2026-05-29T17:06:44.065935Z"
 }
