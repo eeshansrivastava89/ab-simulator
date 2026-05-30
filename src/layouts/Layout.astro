@@ -31,7 +31,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site).href
 		const root = document.documentElement
 		root.setAttribute('data-theme', theme)
 		document.querySelectorAll('[data-theme-btn]').forEach(btn => {
-			btn.classList.toggle('active', true)
+			btn.classList.add('active')
 		})
 	}
 	window.__toggleTheme = function() {

@@ -15,11 +15,7 @@ const TILE_COLORS = {
 const TILE_COLOR_CLASSES = [
 	'bg-gray-100',
 	'bg-emerald-300',
-	'bg-red-500',
-	'bg-red-600',
-	'bg-gray-800',
-	'bg-gray-700',
-	'bg-green-600'
+	'bg-red-500'
 ]
 
 const TILE_STATE_CONFIG = {
@@ -66,25 +62,16 @@ const PROGRESS_CLASSES = Object.freeze({
 	slotPop: 'pop'
 })
 
-const DOM_CACHE = new Map()
-function getDom(id, selector, all = false) {
-	const cacheKey = `${id}:${selector}:${all}`
-	if (DOM_CACHE.has(cacheKey)) return DOM_CACHE.get(cacheKey)
-	const node = all ? document.querySelectorAll(selector) : document.querySelector(selector)
-	DOM_CACHE.set(cacheKey, node)
-	return node
-}
-
 const DOM = {
-	progressContainer: () => getDom('progressContainer', '.pineapple-progress'),
-	progressStats: () => getDom('progressStats', '#pineapple-stats'),
-	progressSlots: () => getDom('progressSlots', '#pineapple-progress-slots'),
-	progressFill: () => getDom('progressFill', '#pineapple-progress-fill'),
-	timer: () => getDom('timer', '#timer'),
-	startButton: () => getDom('startButton', '#start-button'),
-	resetButton: () => getDom('resetButton', '#reset-button'),
-	tryAgainButtons: () => getDom('tryAgainButtons', '.try-again-button', true),
-	grid: () => getDom('grid', '#letter-grid')
+	progressContainer: () => document.querySelector('.pineapple-progress'),
+	progressStats: () => document.querySelector('#pineapple-stats'),
+	progressSlots: () => document.querySelector('#pineapple-progress-slots'),
+	progressFill: () => document.querySelector('#pineapple-progress-fill'),
+	timer: () => document.querySelector('#timer'),
+	startButton: () => document.querySelector('#start-button'),
+	resetButton: () => document.querySelector('#reset-button'),
+	tryAgainButtons: () => document.querySelectorAll('.try-again-button'),
+	grid: () => document.querySelector('#letter-grid')
 }
 
 const MEMORIZE_DURATION_SECONDS = 7
@@ -362,7 +349,11 @@ function setupPuzzle() {
 	DOM.startButton()?.addEventListener('click', startChallenge)
 	DOM.resetButton()?.addEventListener('click', () => resetPuzzle())
 	DOM.tryAgainButtons().forEach((btn) => btn.addEventListener('click', () => resetPuzzle(true)))
-	forEachMemoryTile((tile) => tile.addEventListener('click', handleTileClick))
+	// Event delegation: single listener on grid catches all tile clicks
+	DOM.grid()?.addEventListener('click', (e) => {
+		const tile = e.target.closest('.memory-tile')
+		if (tile) handleTileClick({ currentTarget: tile })
+	})
 }
 
 function startChallenge() {
@@ -372,7 +363,6 @@ function startChallenge() {
 	puzzleState.puzzleConfig = window.PuzzleConfig.getPuzzleForVariant(puzzleState.variant)
 	$('user-variant').textContent = `Variant ${puzzleState.variant} | ${puzzleState.puzzleConfig.id}`
 	buildGrid(puzzleState.puzzleConfig)
-	forEachMemoryTile((tile) => tile.addEventListener('click', handleTileClick))
 	puzzleState.foundPineapples = []
 	puzzleState.totalClicks = 0
 	puzzleState.gridState = Array(5)
@@ -489,7 +479,7 @@ async function handleSuccessfulRun(viewRefs) {
 
 function handleFailedRun(viewRefs) {
 	const { progressContainer, resultTime, resultGuesses } = viewRefs
-	if (resultTime) resultTime.textContent = '00:60:00'
+	if (resultTime) resultTime.textContent = formatTime(ROUND_DURATION_MS)
 	if (resultGuesses) resultGuesses.textContent = puzzleState.totalClicks
 	window.abPersonalBest?.setVisibility(false)
 	progressContainer?.classList.add('fail')
@@ -526,7 +516,7 @@ async function endChallenge(success) {
 function resetPuzzle(isRepeat = false) {
 	resetState()
 	const timer = DOM.timer()
-	if (timer) timer.textContent = '00:60:00'
+	if (timer) timer.textContent = formatTime(ROUND_DURATION_MS)
 	clearCountdownTimer()
 	resetMemorizePill()
 	updatePineappleProgress(0)

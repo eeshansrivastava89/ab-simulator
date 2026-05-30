@@ -17,10 +17,10 @@
           <span class="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-xs font-bold text-slate-600 dark:bg-slate-800 dark:text-slate-200">
             ${index + 1}
           </span>
-          <span class="truncate font-medium ${isCurrentUser ? 'font-semibold' : ''}">${entry.username}</span>
+          <span class="truncate font-medium ${isCurrentUser ? 'font-semibold' : ''}">${escapeHtml(entry.username)}</span>
           ${youTag}
         </span>
-        <span class="shrink-0 font-mono font-bold tabular-nums text-slate-900 dark:text-slate-100">${Number(entry.best_time).toFixed(2)}s</span>
+        <span class="shrink-0 font-mono font-bold tabular-nums text-slate-900 dark:text-slate-100">${Number(entry.best_time ?? 0).toFixed(2)}s</span>
       </li>
     `
 	}
@@ -41,9 +41,9 @@
         <div class="flex items-center justify-between">
           <span class="flex min-w-0 items-center gap-2">
             <span class="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-amber-100 text-xs font-bold text-amber-700 dark:bg-amber-500/30 dark:text-amber-200">${state.rank}</span>
-            <span class="truncate font-medium text-foreground">${state.username}</span>
+            <span class="truncate font-medium text-foreground">${escapeHtml(state.username)}</span>
           </span>
-          <span class="shrink-0 font-mono font-bold tabular-nums text-foreground">${Number(state.bestTime).toFixed(2)}s</span>
+          <span class="shrink-0 font-mono font-bold tabular-nums text-foreground">${Number(state.bestTime ?? 0).toFixed(2)}s</span>
         </div>
         <div class="text-[10px] text-amber-600/70 dark:text-amber-400/60 mt-1">${ofTotal ? '#' + state.rank + ofTotal + ' players' : ''}</div>
       </div>

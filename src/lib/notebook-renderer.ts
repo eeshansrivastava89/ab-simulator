@@ -1,15 +1,9 @@
 // SYNCED from datascienceapps/src/lib/notebooks.ts (simplified — local file reads, no GitHub fetch)
 
 import { marked } from 'marked'
+import sanitizeHtml from 'sanitize-html'
 import Prism from 'prismjs'
-// Load language grammars. Order matters: main Prism import first.
 import 'prismjs/components/prism-python.js'
-import 'prismjs/components/prism-sql.js'
-import 'prismjs/components/prism-r.js'
-import 'prismjs/components/prism-javascript.js'
-import 'prismjs/components/prism-typescript.js'
-import 'prismjs/components/prism-bash.js'
-import 'prismjs/components/prism-json.js'
 import fs from 'node:fs'
 
 export interface NotebookSummary {
@@ -29,6 +23,11 @@ export interface NotebookSummary {
 	sample_size_a?: number
 	sample_size_b?: number
 	generated_at: string
+	total_games?: number
+	completion_rate?: number
+	repeat_rate?: number
+	speed_demon_threshold?: number
+	most_improved?: { username: string; improvement: number }
 }
 
 interface IpynbCell {
@@ -126,7 +125,11 @@ export function renderNotebook(ipynb: Ipynb): string {
 	const cells = ipynb.cells.map((cell) => {
 		if (cell.cell_type === 'markdown') {
 			const md = joinSource(cell.source)
-			const html = marked.parse(md, { async: false }) as string
+			const rawHtml = marked.parse(md, { async: false }) as string
+			const html = sanitizeHtml(rawHtml, {
+				allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img', 'del', 'mark', 'details', 'summary']),
+				allowedAttributes: { ...sanitizeHtml.defaults.allowedAttributes, img: ['src', 'alt', 'title', 'width', 'height'] }
+			})
 			return `<div class="nb-cell nb-markdown">${html}</div>`
 		}
 		if (cell.cell_type === 'code') {

@@ -112,23 +112,7 @@
 	}
 
 	function computeKDE(data) {
-		if (!data || data.length === 0) return { x: [], y: [] }
-		const mean = data.reduce((a, b) => a + b) / data.length
-		const std = Math.sqrt(data.reduce((sum, x) => sum + Math.pow(x - mean, 2), 0) / data.length)
-		const bw = std * Math.pow(data.length, -0.2)
-		const min = Math.min(...data),
-			max = Math.max(...data)
-		const x = [],
-			y = []
-		for (let i = 0; i <= 150; i++) {
-			const xi = min + ((max - min) * i) / 150
-			x.push(xi)
-			y.push(
-				data.reduce((sum, d) => sum + Math.exp(-Math.pow((xi - d) / bw, 2) / 2), 0) /
-					(data.length * bw * Math.sqrt(2 * Math.PI))
-			)
-		}
-		return { x, y }
+		return window.computeKDE(data)
 	}
 
 	function renderDistributionChart(d) {
@@ -242,7 +226,18 @@
 		)
 
 		// Stage names for y-axis (reversed so Started is at top)
+		// Precompute percentages before reversing
 		const stages = variantA.map(f => f.stage).reverse()
+		const variantAData = variantA.map(f => ({
+			value: -f.event_count,
+			percent: ((f.event_count / maxA) * 100).toFixed(0),
+			actualValue: f.event_count
+		})).reverse()
+		const variantBData = variantB.map(f => ({
+			value: f.event_count,
+			percent: ((f.event_count / maxB) * 100).toFixed(0),
+			actualValue: f.event_count
+		})).reverse()
 
 		const option = {
 			backgroundColor: theme.backgroundColor,
@@ -297,11 +292,7 @@
 					name: 'Variant A',
 					type: 'bar',
 					stack: 'total',
-					data: variantA.map(f => ({
-						value: -f.event_count, // Negative for left side
-						percent: ((f.event_count / maxA) * 100).toFixed(0),
-						actualValue: f.event_count
-					})).reverse(),
+					data: variantAData,
 					itemStyle: {
 						color: colors.variantA,
 						borderRadius: [4, 0, 0, 4]
@@ -322,11 +313,7 @@
 					name: 'Variant B',
 					type: 'bar',
 					stack: 'total',
-					data: variantB.map(f => ({
-						value: f.event_count, // Positive for right side
-						percent: ((f.event_count / maxB) * 100).toFixed(0),
-						actualValue: f.event_count
-					})).reverse(),
+					data: variantBData,
 					itemStyle: {
 						color: colors.variantB,
 						borderRadius: [0, 4, 4, 0]
@@ -359,7 +346,7 @@
 		const hasData = completions && completions.length > 0
 
 		// Skip re-render if data unchanged (preserves scroll position)
-		const newHash = JSON.stringify(completions)
+		const newHash = `${completions.length}:${completions[0]?.id ?? ''}:${completions[completions.length - 1]?.id ?? ''}`
 		if (newHash === prevCompletionsHash) return
 		prevCompletionsHash = newHash
 
@@ -481,14 +468,15 @@
 			return
 		}
 
-		// Check if data changed (skip re-render to preserve zoom/pan)
-		const newGeoHash = JSON.stringify(geoData)
-		const dataChanged = newGeoHash !== prevGeoHash
-
 		// Find most recent completion for follow-live
 		const mostRecent = geoData.reduce((a, b) =>
 			new Date(a.last_completion_at) > new Date(b.last_completion_at) ? a : b
 		)
+
+		// Check if data changed (skip re-render to preserve zoom/pan)
+		const newGeoHash = `${geoData.length}:${mostRecent?.last_completion_at ?? ''}`
+		const dataChanged = newGeoHash !== prevGeoHash
+
 		const mostRecentKey = mostRecent ? `${mostRecent.city}-${mostRecent.last_completion_at}` : null
 		const hasNewCompletion = mostRecentKey !== prevMostRecentKey
 
@@ -678,8 +666,10 @@
 	updateDashboard()
 	scheduleNextPoll()
 
-	// Dark mode observer - update all charts when theme changes
-	const observer = new MutationObserver(() => {
+	// Theme observer — only re-render when data-theme attribute changes
+	const observer = new MutationObserver((mutations) => {
+		const themeChanged = mutations.some(m => m.attributeName === 'data-theme')
+		if (!themeChanged) return
 		// Re-render all charts with new theme
 		Object.values(charts).forEach(chart => {
 			if (chart) {
@@ -692,5 +682,5 @@
 		// Full re-render to apply all theme changes
 		updateDashboard()
 	})
-	observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+	observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
 })()

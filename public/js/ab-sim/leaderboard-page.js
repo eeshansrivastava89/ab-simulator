@@ -108,18 +108,7 @@
 	}
 
 	function computeKDE(data, bandwidth) {
-		if (!data || data.length === 0) return { x: [], y: [] }
-		const mean = data.reduce((a, b) => a + b, 0) / data.length
-		const std = Math.sqrt(data.reduce((sum, x) => sum + Math.pow(x - mean, 2), 0) / data.length)
-		const bw = bandwidth || std * Math.pow(data.length, -0.2)
-		const min = Math.min(...data), max = Math.max(...data)
-		const x = [], y = []
-		for (let i = 0; i <= 150; i++) {
-			const xi = min + ((max - min) * i) / 150
-			x.push(xi)
-			y.push(data.reduce((sum, d) => sum + Math.exp(-Math.pow((xi - d) / bw, 2) / 2), 0) / (data.length * bw * Math.sqrt(2 * Math.PI)))
-		}
-		return { x, y }
+		return window.computeKDE(data, bandwidth)
 	}
 
 	function percentile(sorted, p) {
@@ -354,7 +343,7 @@
 		const hasAnyCompletion = normalizedRows.length > 0
 		if (hasAnyCompletion) earnedBadges.add('first_game')
 		if (actualTopTenRows.some(row => row.username === username)) earnedBadges.add('top10')
-		const totalBadges = badgeList?.querySelectorAll('[data-badge-key]')?.length || 6
+		const totalBadges = badgeList?.querySelectorAll('[data-badge-key]')?.length || 5
 
 			badgeList?.querySelectorAll('[data-badge-key]').forEach(el => {
 				el.dataset.tooltip = badgeTooltip(el.dataset.badgeKey, speedThreshold)
