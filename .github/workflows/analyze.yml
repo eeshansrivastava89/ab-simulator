@@ -54,7 +54,44 @@ jobs:
             git push origin HEAD:main
           fi
 
+      - name: Validate analytics config
+        run: |
+          if [ "$PUBLIC_ENABLE_ANALYTICS" = "true" ]; then
+            if [ -z "$PUBLIC_POSTHOG_KEY" ]; then
+              echo "::error::PUBLIC_ENABLE_ANALYTICS is true but PUBLIC_POSTHOG_KEY secret is missing."
+              exit 1
+            fi
+            if [ -z "$PUBLIC_POSTHOG_HOST" ]; then
+              echo "::error::PUBLIC_ENABLE_ANALYTICS is true but PUBLIC_POSTHOG_HOST secret is missing."
+              exit 1
+            fi
+            if [ -z "$PUBLIC_ANALYTICS_ALLOWED_HOSTS" ]; then
+              echo "::error::PUBLIC_ENABLE_ANALYTICS is true but PUBLIC_ANALYTICS_ALLOWED_HOSTS variable is missing."
+              exit 1
+            fi
+          else
+            echo "Analytics disabled — skipping validation."
+          fi
+        env:
+          PUBLIC_ENABLE_ANALYTICS: ${{ vars.PUBLIC_ENABLE_ANALYTICS }}
+          PUBLIC_POSTHOG_KEY: ${{ secrets.PUBLIC_POSTHOG_KEY }}
+          PUBLIC_POSTHOG_HOST: ${{ secrets.PUBLIC_POSTHOG_HOST }}
+          PUBLIC_ANALYTICS_ALLOWED_HOSTS: ${{ vars.PUBLIC_ANALYTICS_ALLOWED_HOSTS }}
+
       - name: Deploy to Fly.io
-        run: flyctl deploy --remote-only
+        run: >
+          flyctl deploy --remote-only
+          --build-arg PUBLIC_POSTHOG_KEY="$PUBLIC_POSTHOG_KEY"
+          --build-arg PUBLIC_POSTHOG_HOST="$PUBLIC_POSTHOG_HOST"
+          --build-arg PUBLIC_POSTHOG_UI_HOST="$PUBLIC_POSTHOG_UI_HOST"
+          --build-arg PUBLIC_ANALYTICS_ALLOWED_HOSTS="$PUBLIC_ANALYTICS_ALLOWED_HOSTS"
+          --build-arg PUBLIC_SUPABASE_URL="$PUBLIC_SUPABASE_URL"
+          --build-arg PUBLIC_SUPABASE_ANON_KEY="$PUBLIC_SUPABASE_ANON_KEY"
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          PUBLIC_POSTHOG_KEY: ${{ secrets.PUBLIC_POSTHOG_KEY }}
+          PUBLIC_POSTHOG_HOST: ${{ secrets.PUBLIC_POSTHOG_HOST }}
+          PUBLIC_POSTHOG_UI_HOST: ${{ vars.PUBLIC_POSTHOG_UI_HOST || 'https://us.posthog.com' }}
+          PUBLIC_ANALYTICS_ALLOWED_HOSTS: ${{ vars.PUBLIC_ANALYTICS_ALLOWED_HOSTS }}
+          PUBLIC_SUPABASE_URL: ${{ secrets.PUBLIC_SUPABASE_URL }}
+          PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.PUBLIC_SUPABASE_ANON_KEY }}
