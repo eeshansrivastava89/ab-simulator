@@ -19,20 +19,9 @@
 	// ─── Charts ────────────────────────────────────────────
 	const charts = { dist: null, hour: null, variant: null }
 
-	function isDarkMode() {
-		return document.documentElement.classList.contains('dark')
-	}
-
-	function getEChartsTheme() {
-		const dark = isDarkMode()
-		return {
-			backgroundColor: 'transparent',
-			textStyle: { color: dark ? '#e5e7eb' : '#374151', fontFamily: 'Inter, sans-serif' },
-			axisLine: { lineStyle: { color: dark ? '#374151' : '#e5e7eb' } },
-			splitLine: { lineStyle: { color: dark ? '#1f2937' : '#f3f4f6' } },
-			legend: { textStyle: { color: dark ? '#e5e7eb' : '#374151' } }
-		}
-	}
+	// Theme helpers are shared via utils.js (window.isDarkMode / window.getEChartsTheme)
+	const isDarkMode = window.isDarkMode
+	const getEChartsTheme = window.getEChartsTheme
 
 	function initChart(containerId) {
 		const container = document.getElementById(containerId)
@@ -376,6 +365,8 @@
 	// ─── Render Geo Map ────────────────────────────────────
 	let leafletMap = null
 	let markerLayer = null
+	let mapTileLayer = null
+	const mapTileUrl = window.mapTileUrl
 	let prevGeoHash = null
 
 	function renderGeoMap(geoData) {
@@ -393,7 +384,7 @@
 
 		if (!leafletMap) {
 			leafletMap = L.map(mapEl, { scrollWheelZoom: true }).setView([25, 0], 1.8)
-			L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+			mapTileLayer = L.tileLayer(mapTileUrl(), {
 				attribution: '&copy; <a href="https://carto.com/">CARTO</a>',
 				subdomains: 'abcd', maxZoom: 19
 			}).addTo(leafletMap)
@@ -404,7 +395,7 @@
 					const btn = L.DomUtil.create('button', 'leaflet-bar leaflet-control')
 					btn.innerHTML = '🌍 Reset'
 					btn.title = 'Reset to global view'
-					btn.style.cssText = 'padding:6px 10px;font-size:12px;font-weight:500;cursor:pointer;background:#fff;border:none;white-space:nowrap;'
+					btn.style.cssText = 'padding:6px 10px;font-size:12px;font-weight:500;cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);white-space:nowrap;'
 					btn.onclick = (e) => { e.stopPropagation(); leafletMap.setView([25, 0], 1.8, { animate: false }) }
 					return btn
 				}
@@ -519,16 +510,13 @@
 		})
 	}
 
-	// ─── Dark mode observer ────────────────────────────────
-	const observer = new MutationObserver(() => {
-		Object.values(charts).forEach(chart => {
-			if (chart) {
-				const theme = getEChartsTheme()
-				chart.setOption({ textStyle: theme.textStyle })
-			}
-		})
+	// ─── Theme observer — re-render when data-theme attribute changes ───
+	const observer = new MutationObserver((mutations) => {
+		if (!mutations.some(m => m.attributeName === 'data-theme')) return
+		if (mapTileLayer) mapTileLayer.setUrl(mapTileUrl())
+		updatePage()
 	})
-	observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+	observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
 
 	// ─── Resize ────────────────────────────────────────────
 	window.addEventListener('resize', () => {

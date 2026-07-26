@@ -3,21 +3,16 @@
 	const USERNAME_KEY = 'simulator_username'
 	const USER_ID_KEY = 'simulator_user_id'
 	window.FEATURE_FLAG_KEY = FEATURE_FLAG_KEY
-	const FALLBACK_ADJECTIVES = [
-		'Curious', 'Optimistic', 'Helpful', 'Clever', 'Swift', 'Lucky', 'Nimble', 'Bright', 'Gentle', 'Daring',
-		'Witty', 'Jolly', 'Sneaky', 'Verbal', 'Improved', 'Artistic', 'Splendid', 'Visual', 'Useful', 'Friendly'
-	]
-	const FALLBACK_ANIMALS = [
-		'Penguin', 'Ermine', 'Otter', 'Fox', 'Owl', 'Tortoise', 'Lynx', 'Badger', 'Puffin', 'Catshark',
-		'Alpaca', 'Baboon', 'Parakeet', 'Armadillo', 'Crane', 'Vole', 'Lark', 'Mammal', 'Meerkat', 'Manatee'
-	]
-
+	// Fallback if generateRandomUsername (index.astro) isn't loaded —
+	// word lists come from utils.js so there's a single curated source.
 	const generateUsername = () => {
 		if (typeof window.generateRandomUsername === 'function') {
 			return window.generateRandomUsername()
 		}
-		const adjective = FALLBACK_ADJECTIVES[Math.floor(Math.random() * FALLBACK_ADJECTIVES.length)]
-		const animal = FALLBACK_ANIMALS[Math.floor(Math.random() * FALLBACK_ANIMALS.length)]
+		const adjectives = window.USERNAME_ADJECTIVES || ['Curious', 'Lucky', 'Swift']
+		const animals = window.USERNAME_ANIMALS || ['Penguin', 'Otter', 'Fox']
+		const adjective = adjectives[Math.floor(Math.random() * adjectives.length)]
+		const animal = animals[Math.floor(Math.random() * animals.length)]
 		return `${adjective} ${animal}`
 	}
 

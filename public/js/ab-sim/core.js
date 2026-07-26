@@ -271,7 +271,7 @@ function buildGrid(config) {
 			row
 				.map(
 					(fruit, colIndex) =>
-						`<div class="aspect-square w-full rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center cursor-pointer transition-all duration-300 relative overflow-hidden memory-tile border-2 border-slate-300 dark:border-slate-600 hover:!bg-amber-100 hover:!border-amber-500 hover:scale-105 dark:hover:!bg-amber-500/20" data-row="${rowIndex}" data-col="${colIndex}" data-fruit="${fruit}">
+						`<div class="aspect-square w-full rounded-xl bg-secondary flex items-center justify-center cursor-pointer transition-all duration-300 relative overflow-hidden memory-tile border-2 border-border hover:!bg-amber-100 hover:!border-amber-500 hover:scale-105 dark:hover:!bg-amber-500/20" data-row="${rowIndex}" data-col="${colIndex}" data-fruit="${fruit}">
           <span class="text-2xl sm:text-3xl transition-all duration-300 fruit-emoji opacity-0 scale-80">${fruit}</span>
         </div>`
 				)
@@ -327,6 +327,8 @@ function displayVariant() {
 	$('user-variant').textContent = `Variant ${variant} | ${config.id}`
 	$('user-username').textContent = username || 'Loading...'
 	$('target-word-count').textContent = config.targetCount
+	// Initialize timer display from the single source of truth
+	updateTimerDisplay(0)
 	buildPineappleProgress(config.targetCount)
 	resetMemorizePill()
 	const puzzleSection = $('puzzle-section')

@@ -104,7 +104,7 @@ const summary = loadLocalSummary('notebooks/ab_test_analysis.summary.json')
 					</div>
 					<div class='flex items-center justify-between rounded-xl bg-card px-4 py-3'>
 						<div class='text-sm font-medium text-muted-foreground'>Time</div>
-						<div id='timer' class='font-mono text-3xl font-bold tabular-nums tracking-tight'>00:60:00</div>
+						<div id='timer' class='font-mono text-3xl font-bold tabular-nums tracking-tight'>01:00:00</div>
 					</div>
 				</div>
 				<div class='pineapple-progress' aria-live='polite'>
@@ -317,11 +317,13 @@ const summary = loadLocalSummary('notebooks/ab_test_analysis.summary.json')
 </Layout>
 
 <script>
-	import { uniqueNamesGenerator, adjectives, animals } from 'unique-names-generator'
+	import { uniqueNamesGenerator } from 'unique-names-generator'
 
+	// Word lists are curated in utils.js (window.USERNAME_ADJECTIVES / USERNAME_ANIMALS)
+	// to keep public leaderboard names friendly.
 	;(window as any).generateRandomUsername = function () {
 		return uniqueNamesGenerator({
-			dictionaries: [adjectives, animals],
+			dictionaries: [(window as any).USERNAME_ADJECTIVES, (window as any).USERNAME_ANIMALS],
 			separator: ' ',
 			style: 'capital',
 			length: 2

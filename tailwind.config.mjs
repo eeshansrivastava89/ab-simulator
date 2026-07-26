@@ -33,6 +33,7 @@ export default {
 				card: {
 					DEFAULT: 'var(--card)',
 					foreground: 'var(--card-foreground)',
+					raised: 'var(--card-raised)',
 				},
 				popover: {
 					DEFAULT: 'var(--popover)',

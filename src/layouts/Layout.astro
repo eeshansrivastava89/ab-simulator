@@ -14,6 +14,14 @@ const posthogUiHost = import.meta.env.PUBLIC_POSTHOG_UI_HOST ?? 'https://us.post
 const allowedHosts = import.meta.env.PUBLIC_ANALYTICS_ALLOWED_HOSTS ?? ''
 
 const siteTitle = `${title} • eeshans.com`
+
+// Single source for primary navigation — rendered in both the desktop
+// nav pills and the mobile menu.
+const navLinks = [
+	{ href: '/', label: 'Game' },
+	{ href: '/analysis/', label: 'Analysis' },
+	{ href: '/leaderboard/', label: 'Leaderboard' }
+]
 const canonicalURL = new URL(Astro.url.pathname, Astro.site).href
 ---
 
@@ -103,12 +111,23 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site).href
 				</div>
 			</div>
 			<div class="flex items-center gap-2 sm:gap-3 shrink-0">
-				<!-- Nav Pills -->
+				<!-- Nav Pills (desktop) -->
 				<nav class="hidden sm:flex items-center gap-1.5" aria-label="Primary">
-					<a href="/" class="nav-pill" data-nav-pill>Game</a>
-					<a href="/analysis/" class="nav-pill" data-nav-pill>Analysis</a>
-					<a href="/leaderboard/" class="nav-pill" data-nav-pill>Leaderboard</a>
+					{navLinks.map((link) => (
+						<a href={link.href} class="nav-pill" data-nav-pill>{link.label}</a>
+					))}
 				</nav>
+
+				<!-- Mobile menu toggle -->
+				<button
+					type="button"
+					class="sm:hidden inline-flex items-center justify-center rounded-lg border border-border/60 bg-card p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+					aria-label="Open navigation menu"
+					aria-expanded="false"
+					data-nav-toggle
+				>
+					<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+				</button>
 
 				<!-- Theme Toggle -->
 				<button
@@ -133,6 +152,15 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site).href
 				</a>
 			</div>
 		</div>
+
+		<!-- Mobile nav menu -->
+		<nav class="hidden sm:hidden border-t border-border/60 px-4 py-2" aria-label="Mobile" data-nav-menu>
+			<div class="flex flex-col gap-1">
+				{navLinks.map((link) => (
+					<a href={link.href} class="nav-pill" data-nav-pill>{link.label}</a>
+				))}
+			</div>
+		</nav>
 	</header>
 
 	<!-- Main -->
@@ -161,6 +189,16 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site).href
 				pill.classList.add('active')
 			}
 		})
+
+		// Mobile menu toggle
+		var toggle = document.querySelector('[data-nav-toggle]')
+		var menu = document.querySelector('[data-nav-menu]')
+		if (toggle && menu) {
+			toggle.addEventListener('click', function() {
+				var open = menu.classList.toggle('hidden') === false
+				toggle.setAttribute('aria-expanded', String(open))
+			})
+		}
 	})()
 	</script>
 </body>

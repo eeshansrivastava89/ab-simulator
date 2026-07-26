@@ -16,20 +16,9 @@
 		funnel: null
 	}
 
-	function isDarkMode() {
-		return document.documentElement.classList.contains('dark')
-	}
-
-	function getEChartsTheme() {
-		const dark = isDarkMode()
-		return {
-			backgroundColor: 'transparent',
-			textStyle: { color: dark ? '#e5e7eb' : '#374151', fontFamily: 'Inter, sans-serif' },
-			axisLine: { lineStyle: { color: dark ? '#374151' : '#e5e7eb' } },
-			splitLine: { lineStyle: { color: dark ? '#1f2937' : '#f3f4f6' } },
-			legend: { textStyle: { color: dark ? '#e5e7eb' : '#374151' } }
-		}
-	}
+	// Theme helpers are shared via utils.js (window.isDarkMode / window.getEChartsTheme)
+	const isDarkMode = window.isDarkMode
+	const getEChartsTheme = window.getEChartsTheme
 
 	function initChart(containerId) {
 		const container = document.getElementById(containerId)
@@ -423,6 +412,8 @@
 
 	let leafletMap = null
 	let markerLayer = null
+	let mapTileLayer = null
+	const mapTileUrl = window.mapTileUrl
 	let prevGeoHash = null
 	let prevMostRecentKey = null
 
@@ -507,8 +498,8 @@
 				markerZoomAnimation: true
 			}).setView([25, 0], 2)
 
-			// Use CartoDB Voyager (clean, fast tiles with labels)
-			L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+			// CARTO tiles matched to the site theme; swapped on theme change
+			mapTileLayer = L.tileLayer(mapTileUrl(), {
 				attribution: '&copy; <a href="https://carto.com/">CARTO</a>',
 				subdomains: 'abcd',
 				maxZoom: 19
@@ -523,7 +514,7 @@
 					const btn = L.DomUtil.create('button', 'leaflet-bar leaflet-control')
 					btn.innerHTML = '🌍 Reset'
 					btn.title = 'Reset to global view'
-					btn.style.cssText = 'padding:6px 10px;font-size:12px;font-weight:500;cursor:pointer;background:#fff;border:none;white-space:nowrap;'
+					btn.style.cssText = 'padding:6px 10px;font-size:12px;font-weight:500;cursor:pointer;background:var(--card);color:var(--foreground);border:1px solid var(--border);white-space:nowrap;'
 					btn.onclick = (e) => {
 						e.stopPropagation()
 						leafletMap.setView([25, 0], 2, { animate: false })
@@ -670,15 +661,8 @@
 	const observer = new MutationObserver((mutations) => {
 		const themeChanged = mutations.some(m => m.attributeName === 'data-theme')
 		if (!themeChanged) return
-		// Re-render all charts with new theme
-		Object.values(charts).forEach(chart => {
-			if (chart) {
-				const theme = getEChartsTheme()
-				chart.setOption({
-					textStyle: theme.textStyle
-				})
-			}
-		})
+		// Swap map tiles to match the new theme
+		if (mapTileLayer) mapTileLayer.setUrl(mapTileUrl())
 		// Full re-render to apply all theme changes
 		updateDashboard()
 	})

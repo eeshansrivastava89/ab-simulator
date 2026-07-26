@@ -1,26 +1,26 @@
 ;(function () {
 	const LEADERBOARD_ROW_SURFACE =
-		'bg-white border border-slate-200 dark:bg-slate-900/80 dark:border-slate-700 shadow-sm'
+		'bg-card border border-border shadow-sm'
 	const LEADERBOARD_ROW_BASE =
 		'flex items-center justify-between gap-2 rounded-xl px-3 py-2 text-sm transition-all duration-200 transform'
 
 	function buildLeaderboardRow(entry, index, isCurrentUser) {
 		const glowClass = isCurrentUser
 			? 'ring-2 ring-amber-300 shadow-[0_0_28px_rgba(251,191,36,0.45)]'
-			: 'hover:ring-1 hover:ring-slate-200 dark:hover:ring-slate-600'
+			: 'hover:ring-1 hover:ring-border'
 		const youTag = isCurrentUser
 			? '<span class="shrink-0 text-[10px] font-bold uppercase text-sky-600 dark:text-sky-300">YOU</span>'
 			: ''
 		return `
-      <li class="${LEADERBOARD_ROW_BASE} ${LEADERBOARD_ROW_SURFACE} ${glowClass} hover:-translate-y-0.5 hover:shadow-lg hover:bg-slate-50 dark:hover:bg-slate-900/60">
+      <li class="${LEADERBOARD_ROW_BASE} ${LEADERBOARD_ROW_SURFACE} ${glowClass} hover:-translate-y-0.5 hover:shadow-lg hover:bg-card-raised">
         <span class="flex min-w-0 flex-1 items-center gap-2">
-          <span class="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-xs font-bold text-slate-600 dark:bg-slate-800 dark:text-slate-200">
+          <span class="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-secondary text-xs font-bold text-muted-foreground">
             ${index + 1}
           </span>
           <span class="truncate font-medium ${isCurrentUser ? 'font-semibold' : ''}">${escapeHtml(entry.username)}</span>
           ${youTag}
         </span>
-        <span class="shrink-0 font-mono font-bold tabular-nums text-slate-900 dark:text-slate-100">${Number(entry.best_time ?? 0).toFixed(2)}s</span>
+        <span class="shrink-0 font-mono font-bold tabular-nums text-foreground">${Number(entry.best_time ?? 0).toFixed(2)}s</span>
       </li>
     `
 	}
@@ -29,7 +29,7 @@
 		// state: { type: 'unplayed' | 'ranked', username?, rank?, bestTime?, totalPlayers? }
 		if (state.type === 'unplayed') {
 			return `
-        <div class="mt-3 rounded-xl border border-dashed border-slate-300 bg-slate-50/80 p-3 text-center dark:border-slate-600 dark:bg-slate-800/50">
+        <div class="mt-3 rounded-xl border border-dashed border-border bg-card-raised/80 p-3 text-center">
           <div class="text-xs text-muted-foreground">🎮 Play to see your rank</div>
         </div>
       `
