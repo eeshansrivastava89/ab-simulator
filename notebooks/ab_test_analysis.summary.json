@@ -12,7 +12,7 @@
     {
       "label": "Completion Rate",
       "value": "71%",
-      "delta": "-20.2%",
+      "delta": "-19.8%",
       "delta_direction": "down",
       "context": "vs 89% control"
     },
@@ -36,12 +36,12 @@
     "mean_b": 8.904,
     "std_a": 7.62,
     "std_b": 8.325,
-    "completion_rate_a": 0.8925,
+    "completion_rate_a": 0.8877,
     "completion_rate_b": 0.7123,
     "repeat_rate_a": 0.6205,
     "repeat_rate_b": 0.5563,
     "observed_power": 0.9515,
-    "srm_p_value": 0.192485
+    "srm_p_value": 0.210728
   },
   "warnings": [
     "Significant drop in completion rate (89% \u2192 71%)"
@@ -50,5 +50,5 @@
   "power_analysis": "95% power \u2014 need 96 per group for 80%",
   "sample_size_a": 166,
   "sample_size_b": 151,
-  "generated_at": "2026-08-17T22:13:58.088116Z"
+  "generated_at": "2026-08-18T00:39:02.930994Z"
 }
